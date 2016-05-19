@@ -32,13 +32,12 @@ class RestClient {
             url += '?' + toQuery(args);
 
         let xhr = new XMLHttpRequest();
+        xhr.open(method, url, true);
 
         let contentType = 'application/json';
         if (method == 'POST')
             contentType = 'application/x-www-form-urlencoded';
-
         xhr.setRequestHeader('Content-Type', contentType);
-        xhr.open(method, url, true);
 
         this.prerequest(xhr);
 

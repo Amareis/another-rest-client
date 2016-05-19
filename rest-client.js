@@ -105,12 +105,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (args) url += '?' + toQuery(args);
 
 	            var xhr = new XMLHttpRequest();
+	            xhr.open(method, url, true);
 
 	            var contentType = 'application/json';
 	            if (method == 'POST') contentType = 'application/x-www-form-urlencoded';
-
 	            xhr.setRequestHeader('Content-Type', contentType);
-	            xhr.open(method, url, true);
 
 	            this.prerequest(xhr);
 
