@@ -2,6 +2,8 @@ module.exports = {
     entry: "./src/rest-client.js",
     output: {
         path: __dirname,
+        library: "RestClient",
+        libraryTarget: "umd",
         filename: "./rest-client.js"
     },
     module: {
