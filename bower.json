@@ -1,5 +1,5 @@
 {
-  "name": "rest-client",
+  "name": "another-rest-client",
   "authors": [
     "joe <terma95@gmail.com>"
   ],
@@ -9,13 +9,11 @@
     "rest"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Amareis/rest-client",
+  "homepage": "https://github.com/Amareis/another-rest-client",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components"
   ],
-  "dependencies": {
-    "minivents": "^2.0.1"
-  }
+  "dependencies": {}
 }

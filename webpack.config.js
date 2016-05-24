@@ -1,5 +1,4 @@
 var webpack = require('webpack');
-var BowerWebpackPlugin = require('bower-webpack-plugin');
 
 module.exports = {
     devtool: 'source-map',
@@ -27,7 +26,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new BowerWebpackPlugin(),
         new webpack.optimize.UglifyJsPlugin({include: /\.min\.js$/})
     ]
 };

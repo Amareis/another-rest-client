@@ -1,6 +1,6 @@
 {
-  "name": "rest-client",
-  "version": "1.0.0",
+  "name": "another-rest-client",
+  "version": "0.2.0",
   "description": "Simple REST API client that makes your code lesser and more beautiful than without it.",
   "main": "rest-client.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Amareis/rest-client.git"
+    "url": "git+https://github.com/Amareis/another-rest-client.git"
   },
   "keywords": [
     "rest"
@@ -17,16 +17,16 @@
   "author": "joe <terma95@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Amareis/rest-client/issues"
+    "url": "https://github.com/Amareis/another-rest-client/issues"
   },
-  "homepage": "https://github.com/Amareis/rest-client#readme",
+  "homepage": "https://github.com/Amareis/another-rest-client#readme",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^2.5.1",
-    "webpack": "^1.13.1",
     "babel": "^6.5.2",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",
-    "bower-webpack-plugin": "^0.1.9"
+    "chai": "^3.5.0",
+    "minivents": "^2.0.2",
+    "mocha": "^2.5.1",
+    "webpack": "^1.13.1"
   }
 }
