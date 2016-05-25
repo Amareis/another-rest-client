@@ -84,6 +84,26 @@ function resource(client, name, baseUrl, ctx) {
             let r = resource(client, resName, self.url(id, false));
             r._resources = self._resources[resName]._resources;
             res[resName] = r;
+
+            r.get = () => {
+                let url = '';
+                if (!id || id instanceof Object) {
+                    url = self.url();
+                    if (id)
+                        url += '?' + encodeUrl(id);
+                } else {
+                    url = self.url(id);
+                }
+                return client._request('GET', url);
+            };
+
+            r.upd = (data, contentType=client._opts.contentType) => {
+                return client._request('PUT', self.url(id), data, contentType);
+            };
+
+            r.del = () => {
+                return client._request('DELETE', self.url(id));
+            };
         }
         return res;
     };
@@ -100,7 +120,7 @@ function resource(client, name, baseUrl, ctx) {
                 self[resName] = r;
             results.push(r);
         }
-        if (Object.prototype.toString.call(resourceName) === '[object Array]')
+        if (resourceName instanceof Array)
             return results;
         return results[0];
     };
@@ -116,28 +136,8 @@ function resource(client, name, baseUrl, ctx) {
         return url;
     };
 
-    self.all = (args) => {
-        let url = self.url();
-        if (args)
-            url += '?' + encodeUrl(args);
-
-        return client._request('GET', url);
-    };
-
-    self.one = (id) => {
-        return client._request('GET', self.url(id));
-    };
-
     self.add = (data, contentType=client._opts.contentType) => {
         return client._request('POST', self.url(), data, contentType);
-    };
-
-    self.upd = (id, data, contentType=client._opts.contentType) => {
-        return client._request('PUT', self.url(id), data, contentType);
-    };
-
-    self.del = (id) => {
-        return client._request('DELETE', self.url(id));
     };
     return self;
 }

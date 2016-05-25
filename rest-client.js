@@ -162,6 +162,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var r = resource(client, resName, self.url(id, false));
 	            r._resources = self._resources[resName]._resources;
 	            res[resName] = r;
+	
+	            r.get = function () {
+	                var url = '';
+	                if (!id || id instanceof Object) {
+	                    url = self.url();
+	                    if (id) url += '?' + encodeUrl(id);
+	                } else {
+	                    url = self.url(id);
+	                }
+	                return client._request('GET', url);
+	            };
+	
+	            r.upd = function (data) {
+	                var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	
+	                return client._request('PUT', self.url(id), data, contentType);
+	            };
+	
+	            r.del = function () {
+	                return client._request('DELETE', self.url(id));
+	            };
 	        }
 	        return res;
 	    };
@@ -201,7 +222,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	
-	        if (Object.prototype.toString.call(resourceName) === '[object Array]') return results;
+	        if (resourceName instanceof Array) return results;
 	        return results[0];
 	    };
 	
@@ -215,31 +236,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return url;
 	    };
 	
-	    self.all = function (args) {
-	        var url = self.url();
-	        if (args) url += '?' + encodeUrl(args);
-	
-	        return client._request('GET', url);
-	    };
-	
-	    self.one = function (id) {
-	        return client._request('GET', self.url(id));
-	    };
-	
 	    self.add = function (data) {
 	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
 	        return client._request('POST', self.url(), data, contentType);
-	    };
-	
-	    self.upd = function (id, data) {
-	        var contentType = arguments.length <= 2 || arguments[2] === undefined ? client._opts.contentType : arguments[2];
-	
-	        return client._request('PUT', self.url(id), data, contentType);
-	    };
-	
-	    self.del = function (id) {
-	        return client._request('DELETE', self.url(id));
 	    };
 	    return self;
 	}
@@ -248,15 +248,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	module.exports = __webpack_require__(2);
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function(){return function(n){var t={},e=[];n=n||this,n.on=function(n,e,i){(t[n]=t[n]||[]).push([e,i])},n.off=function(n,i){n||(t={});for(var f=t[n]||e,l=f.length=i?f.length:0;l--;)i==f[l][0]&&f.splice(l,1)},n.emit=function(n){for(var i,f=t[n]||e,l=f.length>0?f.slice(0,f.length):f,c=0;i=l[c++];)i[0].apply(i[1],e.slice.call(arguments,1))}}}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports=function(n){var t={},e=[];n=n||this,n.on=function(n,e,l){(t[n]=t[n]||[]).push([e,l])},n.off=function(n,l){n||(t={});for(var o=t[n]||e,i=o.length=l?o.length:0;i--;)l==o[i][0]&&o.splice(i,1)},n.emit=function(n){for(var l,o=t[n]||e,i=o.length>0?o.slice(0,o.length):o,c=0;l=i[c++];)l[0].apply(l[1],e.slice.call(arguments,1))}};
 
 /***/ }
 /******/ ])
