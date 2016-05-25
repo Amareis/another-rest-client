@@ -78,12 +78,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, RestClient);
 	
 	        this.host = host;
-	        this._resources = {};
-	
 	        this.conf(options);
+	
 	        new _minivents2.default(this);
 	
-	        resource(this, '', '', this);
+	        resource(this, undefined, '', undefined, this);
 	    }
 	
 	    _createClass(RestClient, [{
@@ -95,13 +94,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                trailing: '',
 	                shortcut: true,
 	                contentType: 'application/json',
-	                encoders: {
-	                    'application/x-www-form-urlencoded': encodeUrl,
-	                    'application/json': JSON.stringify
-	                },
-	                decoders: {
-	                    'application/json': JSON.parse
-	                }
+	                'application/x-www-form-urlencoded': { encode: encodeUrl },
+	                'application/json': { encode: JSON.stringify, decode: JSON.parse }
 	            };
 	
 	            for (var k in this._opts) {
@@ -116,12 +110,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var data = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 	            var contentType = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
 	
+	            if (url.indexOf('?') == -1) url += this._opts.trailing;else url = url.replace('?', this._opts.trailing + '?');
+	
 	            var xhr = new XMLHttpRequest();
 	            xhr.open(method, this.host + url, true);
 	
 	            if (contentType) {
-	                var encoder = this._opts.encoders[contentType];
-	                if (encoder) data = encoder(data);
+	                var mime = this._opts[contentType];
+	                if (mime && mime.encode) data = mime.encode(data);
 	                xhr.setRequestHeader('Content-Type', contentType);
 	            }
 	
@@ -135,9 +131,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            _this.emit('success', xhr);
 	
 	                            var responseContentType = xhr.getResponseHeader('Content-Type');
-	                            var decoder = _this._opts.decoders[responseContentType];
+	                            var _mime = _this._opts[responseContentType];
 	                            var res = xhr.responseText;
-	                            if (decoder) res = decoder(res);
+	                            if (_mime && _mime.decode) res = _mime.decode(res);
 	
 	                            resolve(res);
 	                        } else {
@@ -155,39 +151,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RestClient;
 	}();
 	
-	function resource(client, name, baseUrl, ctx) {
-	    var self = ctx ? ctx : function (id) {
-	        var res = {};
+	function resource(client, parent, name, id, ctx) {
+	    var self = ctx ? ctx : function (newId) {
+	        if (newId == undefined) return self;
+	
+	        var copy = resource(client, parent, name, newId);
+	        copy._shortcuts = self._shortcuts;
 	        for (var resName in self._resources) {
-	            var r = resource(client, resName, self.url(id, false));
-	            r._resources = self._resources[resName]._resources;
-	            res[resName] = r;
+	            var original = self._resources[resName];
+	            var derived = resource(client, copy, resName);
+	            derived._resources = original._resources;
+	            derived._shortcuts = original._shortcuts;
 	
-	            r.get = function () {
-	                var url = '';
-	                if (!id || id instanceof Object) {
-	                    url = self.url();
-	                    if (id) url += '?' + encodeUrl(id);
-	                } else {
-	                    url = self.url(id);
-	                }
-	                return client._request('GET', url);
-	            };
-	
-	            r.upd = function (data) {
-	                var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
-	
-	                return client._request('PUT', self.url(id), data, contentType);
-	            };
-	
-	            r.del = function () {
-	                return client._request('DELETE', self.url(id));
-	            };
+	            copy._resources[resName] = derived;
+	            if (resName in self._shortcuts) copy[resName] = derived;
 	        }
-	        return res;
+	        return copy;
 	    };
 	
 	    self._resources = {};
+	    self._shortcuts = {};
 	
 	    self.res = function (resourceName) {
 	        var shortcut = arguments.length <= 1 || arguments[1] === undefined ? client._opts.shortcut : arguments[1];
@@ -202,9 +185,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            for (var _iterator = resourceArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	                var resName = _step.value;
 	
-	                var r = self._resources[resName] || resource(client, resName, self.url(undefined, false));
+	                var r = self._resources[resName] || resource(client, self, resName);
 	                self._resources[resName] = r;
-	                if (shortcut) self[resName] = r;
+	                if (shortcut) {
+	                    self._shortcuts[resName] = r;
+	                    self[resName] = r;
+	                }
 	                results.push(r);
 	            }
 	        } catch (err) {
@@ -226,21 +212,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return results[0];
 	    };
 	
-	    self.url = function (id) {
-	        var final = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-	
-	        var url = baseUrl;
+	    self.url = function () {
+	        var url = parent ? parent.url() : '';
 	        if (name) url += '/' + name;
-	        if (id !== undefined) url += '/' + id;
-	        if (final) url += client._opts.trailing;
+	        if (id != undefined) url += '/' + id;
 	        return url;
 	    };
 	
-	    self.add = function (data) {
-	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	    if (id == undefined) {
+	        self.add = function (data) {
+	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
-	        return client._request('POST', self.url(), data, contentType);
-	    };
+	            return client._request('POST', self.url(), data, contentType);
+	        };
+	
+	        self.get = function (args) {
+	            var url = self.url();
+	            if (args) url += '?' + encodeUrl(args);
+	            return client._request('GET', url);
+	        };
+	    } else {
+	        self.get = function () {
+	            return client._request('GET', self.url());
+	        };
+	
+	        self.upd = function (data) {
+	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	
+	            return client._request('PUT', self.url(), data, contentType);
+	        };
+	
+	        self.del = function () {
+	            return client._request('DELETE', self.url());
+	        };
+	    }
 	    return self;
 	}
 	

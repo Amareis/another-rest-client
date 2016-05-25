@@ -10,12 +10,11 @@ function encodeUrl(data) {
 class RestClient {
     constructor(host, options) {
         this.host = host;
-        this._resources = {};
-
         this.conf(options);
+
         new Events(this);
 
-        resource(this, '', '', this);
+        resource(this, undefined, '', undefined, this);
     }
 
     conf(options={}) {
@@ -23,13 +22,8 @@ class RestClient {
             trailing: '',
             shortcut: true,
             contentType: 'application/json',
-            encoders: {
-                'application/x-www-form-urlencoded': encodeUrl,
-                'application/json': JSON.stringify
-            },
-            decoders: {
-                'application/json': JSON.parse
-            }
+            'application/x-www-form-urlencoded': {encode: encodeUrl},
+            'application/json': {encode: JSON.stringify, decode: JSON.parse}
         };
 
         for (let k in this._opts) {
@@ -39,13 +33,18 @@ class RestClient {
     }
 
     _request(method, url, data=null, contentType=null) {
+        if (url.indexOf('?') == -1)
+            url += this._opts.trailing;
+        else
+            url = url.replace('?', this._opts.trailing + '?');
+
         let xhr = new XMLHttpRequest();
         xhr.open(method, this.host + url, true);
 
         if (contentType) {
-            let encoder = this._opts.encoders[contentType];
-            if (encoder)
-                data = encoder(data);
+            let mime = this._opts[contentType];
+            if (mime && mime.encode)
+                data = mime.encode(data);
             xhr.setRequestHeader('Content-Type', contentType);
         }
 
@@ -59,10 +58,10 @@ class RestClient {
                         this.emit('success', xhr);
 
                         let responseContentType = xhr.getResponseHeader('Content-Type');
-                        let decoder = this._opts.decoders[responseContentType];
+                        let mime = this._opts[responseContentType];
                         let res = xhr.responseText;
-                        if (decoder)
-                            res = decoder(res);
+                        if (mime && mime.decode)
+                            res = mime.decode(res);
 
                         resolve(res);
                     } else {
@@ -77,47 +76,39 @@ class RestClient {
     }
 }
 
-function resource(client, name, baseUrl, ctx) {
-    let self = ctx ? ctx : (id) => {
-        let res = {};
+function resource(client, parent, name, id, ctx) {
+    let self = ctx ? ctx : (newId) => {
+        if (newId == undefined)
+            return self;
+
+        let copy = resource(client, parent, name, newId);
+        copy._shortcuts = self._shortcuts;
         for (let resName in self._resources) {
-            let r = resource(client, resName, self.url(id, false));
-            r._resources = self._resources[resName]._resources;
-            res[resName] = r;
+            let original = self._resources[resName];
+            let derived = resource(client, copy, resName);
+            derived._resources = original._resources;
+            derived._shortcuts = original._shortcuts;
 
-            r.get = () => {
-                let url = '';
-                if (!id || id instanceof Object) {
-                    url = self.url();
-                    if (id)
-                        url += '?' + encodeUrl(id);
-                } else {
-                    url = self.url(id);
-                }
-                return client._request('GET', url);
-            };
-
-            r.upd = (data, contentType=client._opts.contentType) => {
-                return client._request('PUT', self.url(id), data, contentType);
-            };
-
-            r.del = () => {
-                return client._request('DELETE', self.url(id));
-            };
+            copy._resources[resName] = derived;
+            if (resName in self._shortcuts)
+                copy[resName] = derived;
         }
-        return res;
+        return copy;
     };
 
     self._resources = {};
+    self._shortcuts = {};
 
     self.res = (resourceName, shortcut=client._opts.shortcut) => {
         let resourceArray = [].concat(resourceName);
         let results = [];
         for (let resName of resourceArray) {
-            let r = self._resources[resName] || resource(client, resName, self.url(undefined, false));
+            let r = self._resources[resName] || resource(client, self, resName);
             self._resources[resName] = r;
-            if (shortcut)
+            if (shortcut) {
+                self._shortcuts[resName] = r;
                 self[resName] = r;
+            }
             results.push(r);
         }
         if (resourceName instanceof Array)
@@ -125,20 +116,39 @@ function resource(client, name, baseUrl, ctx) {
         return results[0];
     };
 
-    self.url = (id, final=true) => {
-        let url = baseUrl;
+    self.url = () => {
+        let url = parent ? parent.url() : '';
         if (name)
             url += '/' + name;
-        if (id !== undefined)
+        if (id != undefined)
             url += '/' + id;
-        if (final)
-            url += client._opts.trailing;
         return url;
     };
 
-    self.add = (data, contentType=client._opts.contentType) => {
-        return client._request('POST', self.url(), data, contentType);
-    };
+    if (id == undefined) {
+        self.add = (data, contentType = client._opts.contentType) => {
+            return client._request('POST', self.url(), data, contentType);
+        };
+
+        self.get = (args) => {
+            let url = self.url();
+            if (args)
+                url += '?' + encodeUrl(args);
+            return client._request('GET', url);
+        };
+    } else {
+        self.get = () => {
+            return client._request('GET', self.url());
+        };
+
+        self.upd = (data, contentType = client._opts.contentType) => {
+            return client._request('PUT', self.url(), data, contentType);
+        };
+
+        self.del = () => {
+            return client._request('DELETE', self.url());
+        };
+    }
     return self;
 }
 
