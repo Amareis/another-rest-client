@@ -1,10 +1,41 @@
 var should = require('chai').should();
+var sinon = require('sinon');
 
 var RestClient = require('../rest-client');
 
 var host = 'http://example.com';
 
+xhr = global.XMLHttpRequest = sinon.useFakeXMLHttpRequest();
+
 describe('RestClient', () => {
+    describe('#_request()', () => {
+        var api;
+
+        beforeEach(() => {
+            api = new RestClient(host);
+            api.res('cookies');
+        });
+
+        it('should append trailing symbol which passed to constructor', () => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            new RestClient(host, {trailing: '/'}).res('cookies').get();
+            req.url.should.be.equal(host + '/cookies/');
+        });
+
+        it('should append trailing symbol before args', () => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            new RestClient(host, {trailing: '/'}).res('cookies').get({fresh: true});
+            req.url.should.be.equal(host + '/cookies/?fresh=true');
+        });
+    });
+});
+
+
+describe('resource', () => {
     describe('#res()', () => {
         var api;
 
@@ -57,38 +88,47 @@ describe('RestClient', () => {
         });
     });
 
-
-    describe('resource', () => {
+    describe('#url()', () => {
         var api;
 
-        beforeEach(() => api = new RestClient(host));
+        beforeEach(() => {
+            api = new RestClient(host);
+            api.res('cookies');
+        });
 
         it('should build correct resource url', () => {
-            var cookies = api.res('cookies');
-            cookies.url().should.be.equal('/cookies');
+            api.cookies.url().should.be.equal('/cookies');
         });
 
         it('should build correct resource instance url', () => {
-            var cookies = api.res('cookies');
-            cookies.url(42).should.be.equal('/cookies/42');
-        });
-
-        it('should append trailing symbol which passed to constructor', () => {
-            var api = new RestClient(host, {trailing: '/'});
-            var cookies = api.res('cookies');
-            cookies.url().should.be.equal('/cookies/');
+            api.cookies(42).url().should.be.equal('/cookies/42');
         });
 
         it('should build correct resource url if two in stack', () => {
-            var cookies = api.res('cookies');
-            cookies.res('bakers');
-            cookies(42).bakers.url(24).should.be.equal('/cookies/42/bakers/24');
+            api.cookies.res('bakers');
+            api.cookies(42).bakers(24).url().should.be.equal('/cookies/42/bakers/24');
         });
 
         it('should build correct resource url if more than two in stack', () => {
-            var cookies = api.res('cookies');
-            cookies.res('bakers').res('cats');
-            cookies(42).bakers(24).cats.url(15).should.be.equal('/cookies/42/bakers/24/cats/15');
+            api.cookies.res('bakers').res('cats');
+            api.cookies(42).bakers(24).cats(15).url().should.be.equal('/cookies/42/bakers/24/cats/15');
+        });
+    });
+
+    describe('#get()', () => {
+        var api;
+
+        beforeEach(() => {
+            api = new RestClient(host);
+            api.res('cookies');
+        });
+
+        it('should correct form query args when get multiply instances', () => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            api.cookies.get({fresh: true});
+            req.url.should.be.equal(host + '/cookies?fresh=true');
         });
     });
 });
