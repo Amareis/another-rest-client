@@ -154,23 +154,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	function resource(client, parent, name, id, ctx) {
 	    var self = ctx ? ctx : function (newId) {
 	        if (newId == undefined) return self;
-	
-	        var copy = resource(client, parent, name, newId);
-	        copy._shortcuts = self._shortcuts;
-	        for (var resName in self._resources) {
-	            var original = self._resources[resName];
-	            var derived = resource(client, copy, resName);
-	            derived._resources = original._resources;
-	            derived._shortcuts = original._shortcuts;
-	
-	            copy._resources[resName] = derived;
-	            if (resName in self._shortcuts) copy[resName] = derived;
-	        }
-	        return copy;
+	        return self._clone(parent, newId);
 	    };
 	
 	    self._resources = {};
 	    self._shortcuts = {};
+	
+	    self._clone = function (parent, newId) {
+	        var copy = resource(client, parent, name, newId);
+	        copy._shortcuts = self._shortcuts;
+	        for (var resName in self._resources) {
+	            copy._resources[resName] = self._resources[resName]._clone(copy);
+	
+	            if (resName in copy._shortcuts) copy[resName] = copy._resources[resName];
+	        }
+	        return copy;
+	    };
 	
 	    self.res = function (resources) {
 	        var shortcut = arguments.length <= 1 || arguments[1] === undefined ? client._opts.shortcut : arguments[1];

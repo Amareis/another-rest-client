@@ -135,6 +135,7 @@ describe('resource', () => {
 
         it('should build correct resource url if more than two in stack', () => {
             api.cookies.res('bakers').res('cats');
+            api.cookies(42).bakers.cats.url().should.be.equal('/cookies/42/bakers/cats');
             api.cookies(42).bakers(24).cats(15).url().should.be.equal('/cookies/42/bakers/24/cats/15');
         });
     });

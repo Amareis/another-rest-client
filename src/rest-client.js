@@ -80,24 +80,23 @@ function resource(client, parent, name, id, ctx) {
     let self = ctx ? ctx : (newId) => {
         if (newId == undefined)
             return self;
-
-        let copy = resource(client, parent, name, newId);
-        copy._shortcuts = self._shortcuts;
-        for (let resName in self._resources) {
-            let original = self._resources[resName];
-            let derived = resource(client, copy, resName);
-            derived._resources = original._resources;
-            derived._shortcuts = original._shortcuts;
-
-            copy._resources[resName] = derived;
-            if (resName in self._shortcuts)
-                copy[resName] = derived;
-        }
-        return copy;
+        return self._clone(parent, newId);
     };
 
     self._resources = {};
     self._shortcuts = {};
+
+    self._clone = (parent, newId) => {
+        let copy = resource(client, parent, name, newId);
+        copy._shortcuts = self._shortcuts;
+        for (let resName in self._resources) {
+            copy._resources[resName] = self._resources[resName]._clone(copy);
+
+            if (resName in copy._shortcuts)
+                copy[resName] = copy._resources[resName];
+        }
+        return copy;
+    };
 
     self.res = (resources, shortcut=client._opts.shortcut) => {
         let makeRes = (resName) => {
