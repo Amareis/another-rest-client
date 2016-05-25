@@ -232,6 +232,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return client._request('PUT', self.url(), data, contentType);
 	        };
 	
+	        self.patch = function (data) {
+	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	
+	            return client._request('PATCH', self.url(), data, contentType);
+	        };
+	
 	        self.del = function () {
 	            return client._request('DELETE', self.url());
 	        };

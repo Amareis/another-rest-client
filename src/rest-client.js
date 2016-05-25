@@ -160,6 +160,10 @@ function resource(client, parent, name, id, ctx) {
             return client._request('PUT', self.url(), data, contentType);
         };
 
+        self.patch = (data, contentType = client._opts.contentType) => {
+            return client._request('PATCH', self.url(), data, contentType);
+        };
+
         self.del = () => {
             return client._request('DELETE', self.url());
         };
