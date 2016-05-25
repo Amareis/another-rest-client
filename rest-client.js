@@ -238,7 +238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return client._request('PATCH', self.url(), data, contentType);
 	        };
 	
-	        self.del = function () {
+	        self.delete = function () {
 	            return client._request('DELETE', self.url());
 	        };
 	    }

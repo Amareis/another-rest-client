@@ -164,7 +164,7 @@ function resource(client, parent, name, id, ctx) {
             return client._request('PATCH', self.url(), data, contentType);
         };
 
-        self.del = () => {
+        self.delete = () => {
             return client._request('DELETE', self.url());
         };
     }
