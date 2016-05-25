@@ -140,22 +140,18 @@ function resource(client, parent, name, id, ctx) {
         return url;
     };
 
+    self.get = (args) => {
+        let url = self.url();
+        if (args)
+            url += '?' + encodeUrl(args);
+        return client._request('GET', url);
+    };
+
     if (id == undefined) {
         self.post = (data, contentType = client._opts.contentType) => {
             return client._request('POST', self.url(), data, contentType);
         };
-
-        self.get = (args) => {
-            let url = self.url();
-            if (args)
-                url += '?' + encodeUrl(args);
-            return client._request('GET', url);
-        };
     } else {
-        self.get = () => {
-            return client._request('GET', self.url());
-        };
-
         self.put = (data, contentType = client._opts.contentType) => {
             return client._request('PUT', self.url(), data, contentType);
         };

@@ -209,23 +209,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return url;
 	    };
 	
+	    self.get = function (args) {
+	        var url = self.url();
+	        if (args) url += '?' + encodeUrl(args);
+	        return client._request('GET', url);
+	    };
+	
 	    if (id == undefined) {
 	        self.post = function (data) {
 	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
 	            return client._request('POST', self.url(), data, contentType);
 	        };
-	
-	        self.get = function (args) {
-	            var url = self.url();
-	            if (args) url += '?' + encodeUrl(args);
-	            return client._request('GET', url);
-	        };
 	    } else {
-	        self.get = function () {
-	            return client._request('GET', self.url());
-	        };
-	
 	        self.put = function (data) {
 	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
