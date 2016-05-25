@@ -210,7 +210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    if (id == undefined) {
-	        self.add = function (data) {
+	        self.post = function (data) {
 	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
 	            return client._request('POST', self.url(), data, contentType);
@@ -226,7 +226,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return client._request('GET', self.url());
 	        };
 	
-	        self.upd = function (data) {
+	        self.put = function (data) {
 	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
 	            return client._request('PUT', self.url(), data, contentType);

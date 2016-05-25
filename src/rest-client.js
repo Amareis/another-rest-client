@@ -141,7 +141,7 @@ function resource(client, parent, name, id, ctx) {
     };
 
     if (id == undefined) {
-        self.add = (data, contentType = client._opts.contentType) => {
+        self.post = (data, contentType = client._opts.contentType) => {
             return client._request('POST', self.url(), data, contentType);
         };
 
@@ -156,7 +156,7 @@ function resource(client, parent, name, id, ctx) {
             return client._request('GET', self.url());
         };
 
-        self.upd = (data, contentType = client._opts.contentType) => {
+        self.put = (data, contentType = client._opts.contentType) => {
             return client._request('PUT', self.url(), data, contentType);
         };
 
