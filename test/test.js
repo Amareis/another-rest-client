@@ -51,6 +51,30 @@ describe('resource', () => {
             t.should.be.an('array');
         });
 
+        it('should accept object of resource names and return object of resources', () => {
+            var t = api.res({
+                'bees': [
+                    'big',
+                    'small'
+                ],
+                'cows': {
+                    'white': 'good'
+                },
+                'dogs': 0
+            });
+            t.should.be.an('object');
+
+            api.bees.should.be.a('function');
+            api.bees.big.should.be.a('function');
+            api.bees.small.should.be.a('function');
+
+            api.cows.should.be.a('function');
+            api.cows.white.should.be.a('function');
+            api.cows.white.good.should.be.a('function');
+
+            api.dogs.should.be.a('function');
+        });
+
         it('should make a shortcut for resource by default', () => {
             api.should.not.have.property('cookies');
             var cookies = api.res('cookies');

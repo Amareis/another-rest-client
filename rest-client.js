@@ -172,44 +172,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	    self._resources = {};
 	    self._shortcuts = {};
 	
-	    self.res = function (resourceName) {
+	    self.res = function (resources) {
 	        var shortcut = arguments.length <= 1 || arguments[1] === undefined ? client._opts.shortcut : arguments[1];
 	
-	        var resourceArray = [].concat(resourceName);
-	        var results = [];
-	        var _iteratorNormalCompletion = true;
-	        var _didIteratorError = false;
-	        var _iteratorError = undefined;
+	        var makeRes = function makeRes(resName) {
+	            if (resName in self._resources) return self._resources[resName];
 	
-	        try {
-	            for (var _iterator = resourceArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                var resName = _step.value;
+	            var r = resource(client, self, resName);
+	            self._resources[resName] = r;
+	            if (shortcut) {
+	                self._shortcuts[resName] = r;
+	                self[resName] = r;
+	            }
+	            return r;
+	        };
 	
-	                var r = self._resources[resName] || resource(client, self, resName);
-	                self._resources[resName] = r;
-	                if (shortcut) {
-	                    self._shortcuts[resName] = r;
-	                    self[resName] = r;
-	                }
-	                results.push(r);
+	        // (resources instanceof String) don't work. Fuck you, javascript.
+	        if (resources.constructor == String) return makeRes(resources);
+	
+	        if (resources instanceof Array) return resources.map(makeRes);
+	
+	        if (resources instanceof Object) {
+	            var res = {};
+	            for (var resName in resources) {
+	                var r = makeRes(resName);
+	                if (resources[resName]) r.res(resources[resName]);
+	                res[resName] = r;
 	            }
-	        } catch (err) {
-	            _didIteratorError = true;
-	            _iteratorError = err;
-	        } finally {
-	            try {
-	                if (!_iteratorNormalCompletion && _iterator.return) {
-	                    _iterator.return();
-	                }
-	            } finally {
-	                if (_didIteratorError) {
-	                    throw _iteratorError;
-	                }
-	            }
+	            return res;
 	        }
-	
-	        if (resourceName instanceof Array) return results;
-	        return results[0];
 	    };
 	
 	    self.url = function () {

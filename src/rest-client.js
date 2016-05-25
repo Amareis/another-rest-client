@@ -99,21 +99,37 @@ function resource(client, parent, name, id, ctx) {
     self._resources = {};
     self._shortcuts = {};
 
-    self.res = (resourceName, shortcut=client._opts.shortcut) => {
-        let resourceArray = [].concat(resourceName);
-        let results = [];
-        for (let resName of resourceArray) {
-            let r = self._resources[resName] || resource(client, self, resName);
+    self.res = (resources, shortcut=client._opts.shortcut) => {
+        let makeRes = (resName) => {
+            if (resName in self._resources)
+                return self._resources[resName];
+
+            let r = resource(client, self, resName);
             self._resources[resName] = r;
             if (shortcut) {
                 self._shortcuts[resName] = r;
                 self[resName] = r;
             }
-            results.push(r);
+            return r;
+        };
+
+        // (resources instanceof String) don't work. Fuck you, javascript.
+        if (resources.constructor == String)
+            return makeRes(resources);
+
+        if (resources instanceof Array)
+            return resources.map(makeRes);
+
+        if (resources instanceof Object) {
+            let res = {};
+            for (let resName in resources) {
+                let r = makeRes(resName);
+                if (resources[resName])
+                    r.res(resources[resName]);
+                res[resName] = r;
+            }
+            return res;
         }
-        if (resourceName instanceof Array)
-            return results;
-        return results[0];
     };
 
     self.url = () => {
