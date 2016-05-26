@@ -215,29 +215,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return client._request('GET', url);
 	    };
 	
-	    if (id == undefined) {
-	        self.post = function (data) {
-	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	    self.post = function (data) {
+	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
-	            return client._request('POST', self.url(), data, contentType);
-	        };
-	    } else {
-	        self.put = function (data) {
-	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	        return client._request('POST', self.url(), data, contentType);
+	    };
 	
-	            return client._request('PUT', self.url(), data, contentType);
-	        };
+	    self.put = function (data) {
+	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
-	        self.patch = function (data) {
-	            var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	        return client._request('PUT', self.url(), data, contentType);
+	    };
 	
-	            return client._request('PATCH', self.url(), data, contentType);
-	        };
+	    self.patch = function (data) {
+	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
 	
-	        self.delete = function () {
-	            return client._request('DELETE', self.url());
-	        };
-	    }
+	        return client._request('PATCH', self.url(), data, contentType);
+	    };
+	
+	    self.delete = function () {
+	        return client._request('DELETE', self.url());
+	    };
 	    return self;
 	}
 	

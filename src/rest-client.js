@@ -146,23 +146,21 @@ function resource(client, parent, name, id, ctx) {
         return client._request('GET', url);
     };
 
-    if (id == undefined) {
-        self.post = (data, contentType = client._opts.contentType) => {
-            return client._request('POST', self.url(), data, contentType);
-        };
-    } else {
-        self.put = (data, contentType = client._opts.contentType) => {
-            return client._request('PUT', self.url(), data, contentType);
-        };
+    self.post = (data, contentType = client._opts.contentType) => {
+        return client._request('POST', self.url(), data, contentType);
+    };
 
-        self.patch = (data, contentType = client._opts.contentType) => {
-            return client._request('PATCH', self.url(), data, contentType);
-        };
+    self.put = (data, contentType = client._opts.contentType) => {
+        return client._request('PUT', self.url(), data, contentType);
+    };
 
-        self.delete = () => {
-            return client._request('DELETE', self.url());
-        };
-    }
+    self.patch = (data, contentType = client._opts.contentType) => {
+        return client._request('PATCH', self.url(), data, contentType);
+    };
+
+    self.delete = () => {
+        return client._request('DELETE', self.url());
+    };
     return self;
 }
 
