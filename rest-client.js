@@ -98,8 +98,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'application/json': { encode: JSON.stringify, decode: JSON.parse }
 	            };
 	
-	            for (var k in this._opts) {
-	                if (k in options) this._opts[k] = options[k];
+	            for (var k in options) {
+	                this._opts[k] = options[k];
 	            }
 	        }
 	    }, {

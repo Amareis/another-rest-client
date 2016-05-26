@@ -26,9 +26,8 @@ class RestClient {
             'application/json': {encode: JSON.stringify, decode: JSON.parse}
         };
 
-        for (let k in this._opts) {
-            if (k in options)
-                this._opts[k] = options[k];
+        for (let k in options) {
+            this._opts[k] = options[k];
         }
     }
 
