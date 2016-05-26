@@ -21,8 +21,41 @@ Now, add it in script tag or require it or import it:
 var RestClient = require('another-rest-client');
 import RestClient from 'another-rest-client'
 ```
-And...
+
+## Usage
 ```js
 var api = new RestClient('http://example.com');
 ```
-Here we go!
+And here we go!
+
+```js
+api.res('cookies');
+api.cookies.get();              //GET http://example.com/cookies
+api.cookies.get({fresh: true}); //GET http://example.com/cookies?fresh=true
+api.cookies(42).get();          //GET http://example.com/cookies/42
+api.cookies(42).get({fields: ['ingridients', 'baker']);  //GET http://example.com/cookies/42?fields=ingridients,baker
+
+api.res(['cows', 'bees']);
+api.cows.post({color: 'white', name: 'Moo'});   //POST http://example.com/cows, body="{"color":"white","name":"Moo"}"
+api.bees(12).put({state: 'dead'});  //PUT http://example.com/bees/12, body="{"state":"dead"}"
+
+api.res({dogs: ['toys', 'friends'], cats: 0, humans: 'posts'});
+api.dogs(1337).toys.get();          //GET http://example.com/dogs/1337/toys
+api.dogs(1337).friends(2).delete(); //DELETE http://example.com/dogs/1337/friends/2
+api.cats(64).patch({age: 3});       //PATCH http://example.com/cats/64, body="{"age":3}"
+
+var i = api.humans('me');
+var myPosts = i.posts;
+i.get().then(function(me) { //GET http://example.com/humans/me
+    console.log(me);    //just object, i.e. {id: 1, name: 'Amareis', profession: 'programmer'}
+    myPosts.post({site: 'habrahabr.ru', nick: 'Amareis'}).then(function(post) {
+        console.log(post);  //object
+    });
+});
+
+//or, if you respect ES6...
+var me = await i.get();
+console.log(me);    //just object, i.e. {id: 1, name: 'Amareis', profession: 'programmer'}
+var post = await myPosts.post({site: 'habrahabr.ru', nick: me.name})
+console.log(post);  //object
+```
