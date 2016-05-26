@@ -14,6 +14,11 @@ class RestClient {
 
         new Events(this);
 
+        // resource must be super class of RestClient
+        // but fucking js cannot into callable objects, so...
+        // After this call all resource methods will be defined
+        // on current RestClient instance (this behaviour affected by last parameter)
+        // At least this parameters are symmetric :D
         resource(this, undefined, '', undefined, this);
     }
 
