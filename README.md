@@ -72,7 +72,11 @@ me.posts.post({site: 'habrahabr.ru', nick: 'Amareis'}).then(function(post) {
     console.log(post);  //object
 });
 ```
-And, of course, you can use ES6 async/await to make your code more readable.
+You can use `url` resource method `url` to get resource url.
+```js
+api.dogs(1337).friends(1).url() == '/dogs/1337/friends/2';
+```
+And, of course, you always can use ES6 async/await to make your code more readable.
 ```js
 var me = api.humans('me');
 var i = await me.get();
