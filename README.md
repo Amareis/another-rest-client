@@ -80,4 +80,22 @@ console.log(i);    //just object, i.e. {id: 1, name: 'Amareis', profession: 'pro
 var post = await me.posts.post({site: 'habrahabr.ru', nick: i.name})
 console.log(post);  //object
 ```
-All the examples given above are based on the default settings If for some reason you are not satisfied, read on (or create an issue if the next section is not helped).
+
+## Events
+`RestClient` use [minivents](https://github.com/allouis/minivents) and emit some events:
+- `request` - when `open` XMLHttpRequest, but before `send`.
+- `response` - when get server response.
+- `success` - when get server response with status 200, 201 or 204.
+- `error` - when get server response with another status.
+
+All events gets current XMLHttpRequest instance.
+
+Often use case - authorization.
+```js
+api.on('request', function(xhr) {
+    xhr.setRequestHeader('Authorization', 'Bearer xxxTOKENxxx');
+});
+```
+
+## Configuration
+All the examples given above are based on the default settings. If for some reason you are not satisfied, read this section.
