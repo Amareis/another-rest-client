@@ -131,7 +131,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var p = new Promise(function (resolve, reject) {
 	                xhr.onreadystatechange = function () {
 	                    if (xhr.readyState == 4) {
-	                        _this.emit('answer', xhr);
+	                        _this.emit('response', xhr);
 	                        if (xhr.status == 200 || xhr.status == 201 || xhr.status == 204) {
 	                            _this.emit('success', xhr);
 	

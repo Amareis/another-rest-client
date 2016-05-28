@@ -57,7 +57,7 @@ class RestClient {
         let p = new Promise((resolve, reject) => {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4) {
-                    this.emit('answer', xhr);
+                    this.emit('response', xhr);
                     if (xhr.status == 200 || xhr.status == 201 || xhr.status == 204) {
                         this.emit('success', xhr);
 
