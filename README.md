@@ -35,30 +35,38 @@ Passing string or array just defines resource or resources with given names. Pas
 ```js
 api.res('cookies');
 api.res(['cows', 'bees']);
-api.res({dogs: ['toys', 'friends'], cats: 0, humans: 'posts'});
+api.res({
+    dogs: [
+        'toys',
+        'friends'],
+    cats: 0,
+    humans:
+        'posts'
+});
 /* last string is equal to:
-api.res('dogs).res(['toys', 'friends']);
+api.res('dogs').res(['toys', 'friends']);
 api.res('cats');
 api.res('humans').res('posts'); */
 ```
 
-Now we can query our API resources using methods `get` (optionally gets query args), `post`, `put`, `patch` (gets body content) and `delete`. All these methods returns promise, that resolves with object that given by server or rejects with `XMLHttpRequest` instance.
+Now we can query our resources using methods `get` (optionally gets query args), `post`, `put`, `patch` (gets body content) and `delete`. All these methods returns promise, that resolves with object that given by server or rejects with `XMLHttpRequest` instance.
 ```js
 api.cookies.get();              //GET http://example.com/cookies
 api.cookies.get({fresh: true}); //GET http://example.com/cookies?fresh=true
-api.cows.post({color: 'white', name: 'Moo'});  //POST http://example.com/cows, body="{"color":"white","name":"Moo"}"
 
-var me = api.humans('me');
-me.get().then(function(i) { //GET http://example.com/humans/me
-    console.log(i);    //just object, i.e. {id: 1, name: 'Amareis', profession: 'programmer'}
+//POST http://example.com/cows, body="{"color":"white","name":"Moo"}"
+api.cows.post({color: 'white', name: 'Moo'}).then(function(cow) {
+    console.log(cow);    //just object, i.e. {id: 123, name: 'Moo', color: 'white'}
 }, function(xhr) {
     console.log(xhr);   //XMLHtppRequest instance
 });
 ```
 If you want query single resource instance, just pass it id into resource.
 ```js
-api.cookies(42).get();          //GET http://example.com/cookies/42
-api.cookies(42).get({fields: ['ingridients', 'baker']);  //GET http://example.com/cookies/42?fields=ingridients,baker
+api.cookies(42).get();  //GET http://example.com/cookies/42
+
+//GET http://example.com/cookies/42?fields=ingridients,baker
+api.cookies(42).get({fields: ['ingridients', 'baker']);
 
 api.bees(12).put({state: 'dead'});  //PUT http://example.com/bees/12, body="{"state":"dead"}"
 api.cats(64).patch({age: 3});       //PATCH http://example.com/cats/64, body="{"age":3}"
@@ -68,12 +76,12 @@ You can query subresources easily.
 api.dogs(1337).toys.get();          //GET http://example.com/dogs/1337/toys
 api.dogs(1337).friends(2).delete(); //DELETE http://example.com/dogs/1337/friends/2
 
-me.posts.post({site: 'habrahabr.ru', nick: 'Amareis'}).then(function(post) {
-    console.log(post);  //object
-});
+//POST http://example.com/humans/me/posts, body="{"site":"habrahabr.ru","nick":"Amareis"}"
+api.humans('me').posts.post({site: 'habrahabr.ru', nick: 'Amareis'});
 ```
-You can use `url` resource method `url` to get resource url.
+You can use `url` resource method to get resource url.
 ```js
+api.dogs.url() == '/dogs';
 api.dogs(1337).friends(1).url() == '/dogs/1337/friends/2';
 ```
 And, of course, you always can use ES6 async/await to make your code more readable.
