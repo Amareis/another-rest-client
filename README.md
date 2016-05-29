@@ -152,3 +152,67 @@ First two ways disables shortcuts globally - on all resources and subresources. 
 Local disable of shortcuts can solve some name conflicts (when resource shortcut overwrites some method), but, probably, you will not be affected by this.
 
 **It is strongly recommended do not disable the shortcuts, they greatly enhance code readability.**
+
+### Request content type
+When you call `post`, `put` or `patch`, you pass an object to be encoded into string and sent to the server. But how it will be encoded and what `Content-Type` header will be set?
+By default - in json (`application/json`), using `JSON.stringify`. To change this behavior, you can manually set request content type:
+```js
+var api = new RestClient('http://example.com', {contentType: 'application/x-www-form-urlencoded'});
+//or by conf
+api.conf({contentType: 'application/x-www-form-urlencoded'});
+//or by second argument in 'post', 'put' or 'patch'
+api.cookies.post({fresh: true}, 'application/x-www-form-urlencoded');
+```
+By default RestClient can encode data in `application/json` and `application/x-www-form-urlencoded`. You can add (or replace defaults with) your own encoders:
+```js
+var opts = {
+    contentType: 'application/x-my-cool-mime',
+    'application/x-my-cool-mime': {
+        encode: function (objectPassedToPostPutOrPatch) {
+            //...
+            return encodedToStringObject;
+        }
+    }
+}
+var api = new RestClient('http://example.com', opts);
+//or by conf
+api.conf(opts);
+```
+If there is no suitable encoder, passed object will be passed to the XMLHttpRequest.send without changes.
+
+### Response content type
+When server answers, it give `Content-Type` header. another-rest-client smart enough to parse it and decode `XMLHttpRequest.responseText` into object. By default it can decode only `application/json` using `JSON.parse`, but you can add your own decoders:
+```js
+var opts = {
+    'application/x-my-cool-mime': {
+        decode: function (stringFromXhrResonseText) {
+            //...
+            return decodedFromStringObject;
+        }
+    }
+}
+var api = new RestClient('http://example.com', opts);
+//or by conf
+api.conf(opts);
+```
+If there is no suitable decoder, gotten string will be passed to Promise.resolve without changes.
+
+Of course, you can combine encoders and decoders for single MIME:
+```js
+var opts = {
+    contentType: 'application/x-my-cool-mime',
+    'application/x-my-cool-mime': {
+        encode: function (objectPassedToPostPutOrPatch) {
+            //...
+            return encodedToStringObject;
+        },
+        decode: function (stringFromXhrResonseText) {
+            //...
+            return decodedFromStringObject;
+        }
+    }
+}
+var api = new RestClient('http://example.com', opts);
+//or by conf
+api.conf(opts);
+```
