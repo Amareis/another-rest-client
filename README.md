@@ -185,7 +185,7 @@ When server answers, it give `Content-Type` header. another-rest-client smart en
 ```js
 var opts = {
     'application/x-my-cool-mime': {
-        decode: function (stringFromXhrResonseText) {
+        decode: function (stringFromXhrResponseText) {
             //...
             return decodedFromStringObject;
         }
@@ -206,7 +206,7 @@ var opts = {
             //...
             return encodedToStringObject;
         },
-        decode: function (stringFromXhrResonseText) {
+        decode: function (stringFromXhrResponseText) {
             //...
             return decodedFromStringObject;
         }
@@ -215,4 +215,14 @@ var opts = {
 var api = new RestClient('http://example.com', opts);
 //or by conf
 api.conf(opts);
+```
+
+## Contributing
+That's easy.
+```bash
+git clone https://github.com/Amareis/another-rest-client.git
+cd another-rest-client
+npm install
+echo "//Some changes..." >> src/rest-client.js
+npm run build && npm test
 ```
