@@ -9,12 +9,10 @@ Library is available with bower or npm:
 bower install --save another-rest-client
 npm install --save-dev another-rest-client
 ```
-
-**ATTENTION:** If you want use another-rest-client with node.js, you must define XMLHttpRequest before import it:
+**ATTENTION:** If you want to use another-rest-client with node.js, you must define XMLHttpRequest before import ([see here](https://github.com/driverdan/node-XMLHttpRequest)):
 ```js
-global.XMLHttpRequest = require('xmlhttprequest')
+global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 ```
-
 Now, add it in script tag or require it or import it:
 ```html
 <script src="bower_components/another-rest-client/rest-client.js">
@@ -82,7 +80,7 @@ api.humans('me').posts.post({site: 'habrahabr.ru', nick: 'Amareis'});
 You can use `url` resource method to get resource url.
 ```js
 api.dogs.url() == '/dogs';
-api.dogs(1337).friends(1).url() == '/dogs/1337/friends/2';
+api.dogs(1337).friends(1).url() == '/dogs/1337/friends/1';
 ```
 And, of course, you always can use ES6 async/await to make your code more readable.
 ```js
