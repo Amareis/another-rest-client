@@ -109,3 +109,46 @@ api.on('request', function(xhr) {
 
 ## Configuration
 All the examples given above are based on the default settings. If for some reason you are not satisfied, read this section.
+
+All configuration is done using the object passed to the constructor or method `conf`. Some options are also duplicated by optional methods arguments.
+
+If you want change RestClient host (lol why?..), you can just:
+```js
+api.host = 'http://example2.com';
+```
+
+### Trailing symbol
+Some APIs require trailing slash (for example, this is the default behavior in the django-rest-framework). By default another-rest-client doesn't use any trailing symbol, but you can change this:
+```js
+var api = new RestClient('http://example.com', {trailing: '/'});
+//or
+api.conf({trailing: '/'});
+```
+Of course, you can pass all you want (`{trailing: '/i-have-no-idea-why-you-want-this-but-you-can/'}`).
+
+### Shortcuts
+Shortcuts - resources and subresources, that accessible as parent resource field:
+```js
+api.cars == undefined;
+var cars = api.res('cars');
+api.cars == cars;   //api.cars is shortcut for 'cars' resource
+```
+By default, another-rest-client will make shortcuts for defined resources. This behavior can be disabled in three ways:
+```js
+api.sounds == undefined
+
+//first way
+var api = new RestClient('http://example.com', {shortcut: false});
+//or, second way
+api.conf({shortcut: false});
+//or, third way
+var sounds = api.res('sounds', false);
+
+//and, still...
+api.sounds == undefined;
+```
+First two ways disables shortcuts globally - on all resources and subresources. Third way disables shortcuts locally - in one `res` call. Also, with third way you can locally *enable* shortcuts (pass `true` as second `res` argument) when globally they are disabled.
+
+Local disable of shortcuts can solve some name conflicts (when resource shortcut overwrites some method), but, probably, you will not be affected by this.
+
+**It is strongly recommended do not disable the shortcuts, they greatly enhance code readability.**
