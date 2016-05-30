@@ -61,7 +61,7 @@ class RestClient {
                     if (xhr.status == 200 || xhr.status == 201 || xhr.status == 204) {
                         this.emit('success', xhr);
 
-                        let responseContentType = xhr.getResponseHeader('Content-Type');
+                        let responseContentType = xhr.getResponseHeader('Content-Type').split(';')[0];
                         let mime = this._opts[responseContentType];
                         let res = xhr.responseText;
                         if (mime && mime.decode)
