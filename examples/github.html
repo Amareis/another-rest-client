@@ -1,0 +1,20 @@
+<html>
+<head>
+    <script src="../rest-client.js"></script>
+    <script>
+        window.onload = function () {
+            var api = new RestClient('https://api.github.com');
+            api.res({repos: 'releases'});
+
+            api.repos('Amareis/another-rest-client').releases('latest').get().then(function(release){
+                console.log(release);
+                document.write('Latest release of another-rest-client:<br>');
+                document.write('Published at: ' + release.published_at + '<br>');
+                document.write('Tag: ' + release.tag_name + '<br>');
+            });
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>
