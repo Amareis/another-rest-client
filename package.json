@@ -1,6 +1,6 @@
 {
   "name": "another-rest-client",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Simple REST API client that makes your code lesser and more beautiful than without it.",
   "main": "rest-client.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-loader": "^6.2.4",
+    "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "chai": "^3.5.0",
     "minivents": "^2.0.2",

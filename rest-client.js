@@ -56,6 +56,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _minivents = __webpack_require__(1);
@@ -95,7 +97,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function conf() {
 	            var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	
-	            this._opts = this._opts || {
+	            var currentOptions = this._opts || {
 	                trailing: '',
 	                shortcut: true,
 	                contentType: 'application/json',
@@ -103,9 +105,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'application/json': { encode: JSON.stringify, decode: JSON.parse }
 	            };
 	
-	            for (var k in options) {
-	                this._opts[k] = options[k];
-	            }
+	            this._opts = _extends(currentOptions, options);
+	
+	            return _extends({}, this._opts);
 	        }
 	    }, {
 	        key: '_request',

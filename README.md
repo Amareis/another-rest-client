@@ -120,6 +120,19 @@ All the examples given above are based on the default settings. If for some reas
 
 All configuration is done using the object passed to the constructor or method `conf`. Some options are also duplicated by optional methods arguments.
 
+`conf` returns full options. If you call it without parameters (just `conf()`), it gives you current options.
+```js
+console.log(api.conf());
+/* Defaults:
+{
+    trailing: '',
+    shortcut: true,
+    contentType: 'application/json',
+    'application/x-www-form-urlencoded': {encode: encodeUrl},
+    'application/json': {encode: JSON.stringify, decode: JSON.parse}
+}*/
+```
+
 If you want change RestClient host (lol why?..), you can just:
 ```js
 api.host = 'http://example2.com';

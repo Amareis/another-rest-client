@@ -23,7 +23,7 @@ class RestClient {
     }
 
     conf(options={}) {
-        this._opts = this._opts || {
+        let currentOptions = this._opts || {
             trailing: '',
             shortcut: true,
             contentType: 'application/json',
@@ -31,9 +31,9 @@ class RestClient {
             'application/json': {encode: JSON.stringify, decode: JSON.parse}
         };
 
-        for (let k in options) {
-            this._opts[k] = options[k];
-        }
+        this._opts = Object.assign(currentOptions, options);
+
+        return Object.assign({}, this._opts);
     }
 
     _request(method, url, data=null, contentType=null) {
