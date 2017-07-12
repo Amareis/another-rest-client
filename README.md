@@ -216,7 +216,7 @@ var api = new RestClient('http://example.com', opts);
 //or by conf
 api.conf(opts);
 ```
-If there is no suitable decoder, gotten string will be passed to Promise.resolve without changes.
+If there is no suitable decoder (or server given't `Content-Type` header, gotten string will be passed to Promise.resolve without changes.
 
 Of course, you can combine encoders and decoders for single MIME:
 ```js
