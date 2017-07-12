@@ -155,5 +155,20 @@ describe('resource', () => {
             api.cookies.get({fresh: true});
             req.url.should.be.equal(host + '/cookies?fresh=true');
         });
+
+        it('should work correctly with an undefined content type', (done) => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            var p = api.cookies.get({fresh: true});
+
+            req.respond(200, [], '{a:1}');
+
+            req.url.should.be.equal(host + '/cookies?fresh=true');
+            return p.then(r => {
+                r.should.be.equal('{a:1}');
+                done();
+            });
+        });
     });
 });
