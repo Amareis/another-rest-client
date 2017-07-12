@@ -7,6 +7,19 @@ function encodeUrl(data) {
     return res.substr(0, res.length - 1);
 }
 
+function safe(func, data) {
+    try {
+        return func(data);
+    }
+    catch(e) {
+        console.error('Error in function "' + func.name + '" while decode/encode data');
+        console.log(func);
+        console.log(data);
+        console.log(e);
+        return data;
+    }
+}
+
 class RestClient {
     constructor(host, options) {
         this.host = host;
@@ -48,7 +61,7 @@ class RestClient {
         if (contentType) {
             let mime = this._opts[contentType];
             if (mime && mime.encode)
-                data = mime.encode(data);
+                data = safe(mime.encode, data);
             xhr.setRequestHeader('Content-Type', contentType);
         }
 
@@ -67,7 +80,7 @@ class RestClient {
                             let responseContentType = responseHeader.split(';')[0];
                             let mime = this._opts[responseContentType];
                             if (mime && mime.decode)
-                                res = mime.decode(res);
+                                res = safe(mime.decode, res);
                         }
                         resolve(res);
                     } else {

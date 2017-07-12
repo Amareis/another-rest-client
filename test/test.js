@@ -165,10 +165,33 @@ describe('resource', () => {
             req.respond(200, [], '{a:1}');
 
             req.url.should.be.equal(host + '/cookies?fresh=true');
-            return p.then(r => {
+            p.then(r => {
                 r.should.be.equal('{a:1}');
                 done();
-            });
+            }).catch(done);
+        });
+
+
+        it('should correctly handle exception with wrong encoded response body', (done) => {
+            var req;
+            xhr.onCreate = r => req = r;
+            sinon.spy(console, 'error');
+            sinon.spy(console, 'log');
+
+            var p = api.cookies.get({fresh: true});
+
+            req.respond(200, {'Content-Type': 'application/json'}, '{"a":1df}');
+
+            req.url.should.be.equal(host + '/cookies?fresh=true');
+            p.then(r => {
+                r.should.be.equal('{"a":1df}');
+                console.error.callCount.should.equal(1);
+                console.log.callCount.should.equal(3);
+
+                console.error.restore();
+                console.log.restore();
+                done();
+            }).catch(done);
         });
     });
 });

@@ -75,6 +75,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }return res.substr(0, res.length - 1);
 	}
 	
+	function safe(func, data) {
+	    try {
+	        return func(data);
+	    } catch (e) {
+	        console.error('Error in function "' + func.name + '" while decode/encode data');
+	        console.log(func);
+	        console.log(data);
+	        console.log(e);
+	        return data;
+	    }
+	}
+	
 	var RestClient = function () {
 	    function RestClient(host, options) {
 	        _classCallCheck(this, RestClient);
@@ -124,7 +136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            if (contentType) {
 	                var mime = this._opts[contentType];
-	                if (mime && mime.encode) data = mime.encode(data);
+	                if (mime && mime.encode) data = safe(mime.encode, data);
 	                xhr.setRequestHeader('Content-Type', contentType);
 	            }
 	
@@ -142,7 +154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            if (responseHeader) {
 	                                var responseContentType = responseHeader.split(';')[0];
 	                                var _mime = _this._opts[responseContentType];
-	                                if (_mime && _mime.decode) res = _mime.decode(res);
+	                                if (_mime && _mime.decode) res = safe(_mime.decode, res);
 	                            }
 	                            resolve(res);
 	                        } else {
