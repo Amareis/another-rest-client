@@ -50,7 +50,7 @@ class RestClient {
     }
 
     _request(method, url, data=null, contentType=null) {
-        if (url.indexOf('?') == -1)
+        if (url.indexOf('?') === -1)
             url += this._opts.trailing;
         else
             url = url.replace('?', this._opts.trailing + '?');
@@ -65,14 +65,14 @@ class RestClient {
             xhr.setRequestHeader('Content-Type', contentType);
         }
 
-        this.emit('request', xhr);
-
-        let p = new Promise((resolve, reject) => {
+        let p = new Promise((resolve, reject) =>
             xhr.onreadystatechange = () => {
-                if (xhr.readyState == 4) {
+                if (xhr.readyState === 4) {
                     this.emit('response', xhr);
-                    if (xhr.status == 200 || xhr.status == 201 || xhr.status == 204) {
+                    p.emit('response', xhr);
+                    if (xhr.status === 200 || xhr.status === 201 || xhr.status === 204) {
                         this.emit('success', xhr);
+                        p.emit('success', xhr);
 
                         let res = xhr.responseText;
                         let responseHeader = xhr.getResponseHeader('Content-Type');
@@ -82,14 +82,20 @@ class RestClient {
                             if (mime && mime.decode)
                                 res = safe(mime.decode, res);
                         }
+                        p.off();
                         resolve(res);
                     } else {
                         this.emit('error', xhr);
+                        p.emit('error', xhr);
+                        p.off();
                         reject(xhr);
                     }
                 }
-            };
-        });
+            }
+        );
+        new Events(p);
+        this.emit('request', xhr);
+        p.emit('request', xhr);
         xhr.send(data);
         return p;
     }
@@ -97,7 +103,7 @@ class RestClient {
 
 function resource(client, parent, name, id, ctx) {
     let self = ctx ? ctx : (newId) => {
-        if (newId == undefined)
+        if (newId === undefined)
             return self;
         return self._clone(parent, newId);
     };
@@ -132,7 +138,7 @@ function resource(client, parent, name, id, ctx) {
         };
 
         // (resources instanceof String) don't work. Fuck you, javascript.
-        if (resources.constructor == String)
+        if (resources.constructor === String)
             return makeRes(resources);
 
         if (resources instanceof Array)
@@ -154,7 +160,7 @@ function resource(client, parent, name, id, ctx) {
         let url = parent ? parent.url() : '';
         if (name)
             url += '/' + name;
-        if (id != undefined)
+        if (id !== undefined)
             url += '/' + id;
         return url;
     };

@@ -193,5 +193,24 @@ describe('resource', () => {
                 done();
             }).catch(done);
         });
+
+
+        it('should emit once event', (done) => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            var respTText;
+
+            var p = api.cookies.get({fresh: true}).on('success', xhr => respText = xhr.responseText);
+
+            req.respond(200, [], '{a:1}');
+
+            req.url.should.be.equal(host + '/cookies?fresh=true');
+            p.then(r => {
+                r.should.be.equal('{a:1}');
+                respText.should.be.equal('{a:1}');
+                done();
+            }).catch(done);
+        });
     });
 });

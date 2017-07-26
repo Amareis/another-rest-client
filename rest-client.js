@@ -129,7 +129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var data = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 	            var contentType = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
 	
-	            if (url.indexOf('?') == -1) url += this._opts.trailing;else url = url.replace('?', this._opts.trailing + '?');
+	            if (url.indexOf('?') === -1) url += this._opts.trailing;else url = url.replace('?', this._opts.trailing + '?');
 	
 	            var xhr = new XMLHttpRequest();
 	            xhr.open(method, this.host + url, true);
@@ -140,14 +140,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                xhr.setRequestHeader('Content-Type', contentType);
 	            }
 	
-	            this.emit('request', xhr);
-	
 	            var p = new Promise(function (resolve, reject) {
-	                xhr.onreadystatechange = function () {
-	                    if (xhr.readyState == 4) {
+	                return xhr.onreadystatechange = function () {
+	                    if (xhr.readyState === 4) {
 	                        _this.emit('response', xhr);
-	                        if (xhr.status == 200 || xhr.status == 201 || xhr.status == 204) {
+	                        p.emit('response', xhr);
+	                        if (xhr.status === 200 || xhr.status === 201 || xhr.status === 204) {
 	                            _this.emit('success', xhr);
+	                            p.emit('success', xhr);
 	
 	                            var res = xhr.responseText;
 	                            var responseHeader = xhr.getResponseHeader('Content-Type');
@@ -156,14 +156,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                var _mime = _this._opts[responseContentType];
 	                                if (_mime && _mime.decode) res = safe(_mime.decode, res);
 	                            }
+	                            p.off();
 	                            resolve(res);
 	                        } else {
 	                            _this.emit('error', xhr);
+	                            p.emit('error', xhr);
+	                            p.off();
 	                            reject(xhr);
 	                        }
 	                    }
 	                };
 	            });
+	            new _minivents2.default(p);
+	            this.emit('request', xhr);
+	            p.emit('request', xhr);
 	            xhr.send(data);
 	            return p;
 	        }
@@ -174,7 +180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function resource(client, parent, name, id, ctx) {
 	    var self = ctx ? ctx : function (newId) {
-	        if (newId == undefined) return self;
+	        if (newId === undefined) return self;
 	        return self._clone(parent, newId);
 	    };
 	
@@ -208,7 +214,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	
 	        // (resources instanceof String) don't work. Fuck you, javascript.
-	        if (resources.constructor == String) return makeRes(resources);
+	        if (resources.constructor === String) return makeRes(resources);
 	
 	        if (resources instanceof Array) return resources.map(makeRes);
 	
@@ -226,7 +232,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    self.url = function () {
 	        var url = parent ? parent.url() : '';
 	        if (name) url += '/' + name;
-	        if (id != undefined) url += '/' + id;
+	        if (id !== undefined) url += '/' + id;
 	        return url;
 	    };
 	
@@ -266,7 +272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports) {
 
-	module.exports=function(n){var t={},e=[];n=n||this,n.on=function(n,e,l){(t[n]=t[n]||[]).push([e,l])},n.off=function(n,l){n||(t={});for(var o=t[n]||e,i=o.length=l?o.length:0;i--;)l==o[i][0]&&o.splice(i,1)},n.emit=function(n){for(var l,o=t[n]||e,i=o.length>0?o.slice(0,o.length):o,c=0;l=i[c++];)l[0].apply(l[1],e.slice.call(arguments,1))}};
+	module.exports=function(n){var t={},e=[];n=n||this,n.on=function(e,r,l){return(t[e]=t[e]||[]).push([r,l]),n},n.off=function(r,l){r||(t={});for(var o=t[r]||e,u=o.length=l?o.length:0;u--;)l==o[u][0]&&o.splice(u,1);return n},n.emit=function(r){for(var l,o=t[r]||e,u=o.length>0?o.slice(0,o.length):o,i=0;l=u[i++];)l[0].apply(l[1],e.slice.call(arguments,1));return n}};
 
 /***/ }
 /******/ ])

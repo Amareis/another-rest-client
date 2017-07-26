@@ -115,6 +115,12 @@ api.on('request', function(xhr) {
 });
 ```
 
+Also, returns by `get`, `post`, `put`, `patch` and `delete` `Promise` objects also emit these events, but only for current request.
+```js
+api.dogs(1337).toys.get().on('success', console.log.bind.(console)).then((toys) => "..."); //in log will be xhr instance
+api.dogs(1337).toys.get().then((toys) => "..."); //log is clear
+```
+
 ## Configuration
 All the examples given above are based on the default settings. If for some reason you are not satisfied, read this section.
 
@@ -216,7 +222,7 @@ var api = new RestClient('http://example.com', opts);
 //or by conf
 api.conf(opts);
 ```
-If there is no suitable decoder (or server given't `Content-Type` header, gotten string will be passed to Promise.resolve without changes.
+If there is no suitable decoder (or server given't `Content-Type` header), gotten string will be passed to Promise.resolve without changes.
 
 Of course, you can combine encoders and decoders for single MIME:
 ```js
