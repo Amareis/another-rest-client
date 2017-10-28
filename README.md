@@ -1,5 +1,5 @@
 # another-rest-client [![Build Status](https://travis-ci.org/Amareis/another-rest-client.svg?branch=master)](https://travis-ci.org/Amareis/another-rest-client)
-Hello all the man! This is simple REST API client that makes your code lesser and more beautiful than without it.
+Hello all the man of code world! This is simple REST API client that makes your code lesser and more beautiful than without it.
 
 There is some rest clients - [restful.js](https://github.com/marmelab/restful.js), [cujojs/rest](https://github.com/cujojs/rest) or [amygdala](https://github.com/lincolnloop/amygdala) - so why you need another rest client? Because with it your code less and more beautiful than without it or with any analogs. Also, its code really simple - less than 200 sloc and (almost) without magic, so you can just read it (and fix, may be?) if something go wrong.
 
