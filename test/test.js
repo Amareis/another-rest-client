@@ -148,12 +148,28 @@ describe('resource', () => {
             api.res('cookies');
         });
 
+        it('should correct form query args when get one instance', () => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            api.cookies(4).get();
+            req.url.should.be.equal(host + '/cookies/4');
+        });
+
         it('should correct form query args when get multiply instances', () => {
             var req;
             xhr.onCreate = r => req = r;
 
             api.cookies.get({fresh: true});
             req.url.should.be.equal(host + '/cookies?fresh=true');
+        });
+
+        it('should correct form query args when get multiply args', () => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            api.cookies.get({'filter[]': 'fresh'}, {'filter[]': 'taste'});
+            req.url.should.be.equal(host + '/cookies?filter%5B%5D=fresh&filter%5B%5D=taste');
         });
 
         it('should work correctly with an undefined content type', (done) => {

@@ -165,10 +165,11 @@ function resource(client, parent, name, id, ctx) {
         return url;
     };
 
-    self.get = (args) => {
+    self.get = (...args) => {
         let url = self.url();
-        if (args)
-            url += '?' + encodeUrl(args);
+        const query = args.map(encodeUrl).join('&')
+        if (query)
+            url += '?' + query;
         return client._request('GET', url);
     };
 

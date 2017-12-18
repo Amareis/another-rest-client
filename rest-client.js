@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -107,7 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createClass(RestClient, [{
 	        key: 'conf',
 	        value: function conf() {
-	            var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	            var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	
 	            var currentOptions = this._opts || {
 	                trailing: '',
@@ -126,8 +126,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function _request(method, url) {
 	            var _this = this;
 	
-	            var data = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-	            var contentType = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
+	            var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+	            var contentType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 	
 	            if (url.indexOf('?') === -1) url += this._opts.trailing;else url = url.replace('?', this._opts.trailing + '?');
 	
@@ -199,7 +199,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    self.res = function (resources) {
-	        var shortcut = arguments.length <= 1 || arguments[1] === undefined ? client._opts.shortcut : arguments[1];
+	        var shortcut = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : client._opts.shortcut;
 	
 	        var makeRes = function makeRes(resName) {
 	            if (resName in self._resources) return self._resources[resName];
@@ -236,26 +236,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return url;
 	    };
 	
-	    self.get = function (args) {
+	    self.get = function () {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
 	        var url = self.url();
-	        if (args) url += '?' + encodeUrl(args);
+	        var query = args.map(encodeUrl).join('&');
+	        if (query) url += '?' + query;
 	        return client._request('GET', url);
 	    };
 	
 	    self.post = function (data) {
-	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	        var contentType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : client._opts.contentType;
 	
 	        return client._request('POST', self.url(), data, contentType);
 	    };
 	
 	    self.put = function (data) {
-	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	        var contentType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : client._opts.contentType;
 	
 	        return client._request('PUT', self.url(), data, contentType);
 	    };
 	
 	    self.patch = function (data) {
-	        var contentType = arguments.length <= 1 || arguments[1] === undefined ? client._opts.contentType : arguments[1];
+	        var contentType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : client._opts.contentType;
 	
 	        return client._request('PATCH', self.url(), data, contentType);
 	    };
@@ -268,13 +273,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	module.exports = RestClient;
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports=function(n){var t={},e=[];n=n||this,n.on=function(e,r,l){return(t[e]=t[e]||[]).push([r,l]),n},n.off=function(r,l){r||(t={});for(var o=t[r]||e,u=o.length=l?o.length:0;u--;)l==o[u][0]&&o.splice(u,1);return n},n.emit=function(r){for(var l,o=t[r]||e,u=o.length>0?o.slice(0,o.length):o,i=0;l=u[i++];)l[0].apply(l[1],e.slice.call(arguments,1));return n}};
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;

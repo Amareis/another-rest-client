@@ -59,6 +59,7 @@ Now we can query our resources using methods `get` (optionally gets query args),
 ```js
 api.cookies.get();              //GET http://example.com/cookies
 api.cookies.get({fresh: true}); //GET http://example.com/cookies?fresh=true
+api.cookies.get({'filter[]': 'fresh'}, {'filter[]': 'taste'}); //GET http://example.com/cookies?filter%5B%5D=fresh&filter%5B%5D=taste
 
 //POST http://example.com/cows, body="{"color":"white","name":"Moo"}"
 api.cows.post({color: 'white', name: 'Moo'}).then(function(cow) {
