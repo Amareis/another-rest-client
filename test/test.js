@@ -187,6 +187,20 @@ describe('resource', () => {
             }).catch(done);
         });
 
+        it('should correctly parse response', (done) => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            var p = api.cookies.get({fresh: true});
+
+            req.respond(200, {'Content-Type': 'application/json'}, '{"a":"1df"}');
+
+            req.url.should.be.equal(host + '/cookies?fresh=true');
+            p.then(r => {
+                r.should.be.deep.equal({"a": "1df"});
+                done();
+            }).catch(done);
+        });
 
         it('should correctly handle exception with wrong encoded response body', (done) => {
             var req;
@@ -209,7 +223,6 @@ describe('resource', () => {
                 done();
             }).catch(done);
         });
-
 
         it('should emit once event', (done) => {
             var req;

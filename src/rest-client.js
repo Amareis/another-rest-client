@@ -74,7 +74,7 @@ class RestClient {
                         this.emit('success', xhr);
                         p.emit('success', xhr);
 
-                        let res = xhr.responseText;
+                        let res = xhr.response;
                         let responseHeader = xhr.getResponseHeader('Content-Type');
                         if (responseHeader) {
                             let responseContentType = responseHeader.split(';')[0];

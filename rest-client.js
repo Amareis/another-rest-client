@@ -149,7 +149,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            _this.emit('success', xhr);
 	                            p.emit('success', xhr);
 	
-	                            var res = xhr.responseText;
+	                            var res = xhr.response;
 	                            var responseHeader = xhr.getResponseHeader('Content-Type');
 	                            if (responseHeader) {
 	                                var responseContentType = responseHeader.split(';')[0];
