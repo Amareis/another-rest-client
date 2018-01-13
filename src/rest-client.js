@@ -94,9 +94,11 @@ class RestClient {
             }
         );
         new Events(p);
-        this.emit('request', xhr);
-        p.emit('request', xhr);
-        xhr.send(data);
+        setTimeout(() => {
+            this.emit('request', xhr);
+            p.emit('request', xhr);
+            xhr.send(data);
+        }, 0);
         return p;
     }
 }

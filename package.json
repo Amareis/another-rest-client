@@ -1,6 +1,6 @@
 {
   "name": "another-rest-client",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Simple REST API client that makes your code lesser and more beautiful than without it.",
   "main": "rest-client.js",
   "scripts": {

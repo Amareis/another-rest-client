@@ -168,9 +168,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                };
 	            });
 	            new _minivents2.default(p);
-	            this.emit('request', xhr);
-	            p.emit('request', xhr);
-	            xhr.send(data);
+	            setTimeout(function () {
+	                _this.emit('request', xhr);
+	                p.emit('request', xhr);
+	                xhr.send(data);
+	            }, 0);
 	            return p;
 	        }
 	    }]);

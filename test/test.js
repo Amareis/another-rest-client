@@ -31,6 +31,22 @@ describe('RestClient', () => {
             new RestClient(host, {trailing: '/'}).res('cookies').get({fresh: true});
             req.url.should.be.equal(host + '/cookies/?fresh=true');
         });
+
+        it('should emit events', (done) => {
+            var req, bool;
+            xhr.onCreate = r => req = r;
+
+            var p = new RestClient(host, {trailing: '/'}).on('request', xhr => bool = true).res('cookies').get({fresh: true});
+            req.url.should.be.equal(host + '/cookies/?fresh=true');
+
+            setTimeout(() => req.respond(200, [], '{a:1}'), 0);
+
+            p.then(() => {
+                bool.should.be.equal(true)
+                done();
+            }).catch(done);
+        });
+
     });
 });
 
@@ -228,7 +244,7 @@ describe('resource', () => {
             var req;
             xhr.onCreate = r => req = r;
 
-            var respTText;
+            var respText;
 
             var p = api.cookies.get({fresh: true}).on('success', xhr => respText = xhr.responseText);
 
@@ -238,6 +254,23 @@ describe('resource', () => {
             p.then(r => {
                 r.should.be.equal('{a:1}');
                 respText.should.be.equal('{a:1}');
+                done();
+            }).catch(done);
+        });
+
+        it('should emit once request event', (done) => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            var bool;
+
+            var p = api.cookies.get({fresh: true}).on('request', xhr => bool = true);
+
+            setTimeout(() => req.respond(200, [], '{a:1}'), 0);
+
+            req.url.should.be.equal(host + '/cookies?fresh=true');
+            p.then(r => {
+                bool.should.be.equal(true);
                 done();
             }).catch(done);
         });
