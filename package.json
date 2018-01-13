@@ -1,6 +1,6 @@
 {
   "name": "another-rest-client",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Simple REST API client that makes your code lesser and more beautiful than without it.",
   "main": "rest-client.js",
   "scripts": {
@@ -30,5 +30,8 @@
     "mocha": "^2.5.1",
     "sinon": "^1.17.4",
     "webpack": "^1.13.1"
+  },
+  "dependencies": {
+    "form-data": "^2.3.1"
   }
 }

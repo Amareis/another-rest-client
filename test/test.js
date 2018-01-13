@@ -1,11 +1,13 @@
 var should = require('chai').should();
 var sinon = require('sinon');
+var FormData = require('form-data');
 
 var RestClient = require('../rest-client');
 
 var host = 'http://example.com';
 
 xhr = global.XMLHttpRequest = sinon.useFakeXMLHttpRequest();
+global.FormData = FormData;
 
 describe('RestClient', () => {
     describe('#_request()', () => {
@@ -36,8 +38,8 @@ describe('RestClient', () => {
             var req, bool;
             xhr.onCreate = r => req = r;
 
-            var p = new RestClient(host, {trailing: '/'}).on('request', xhr => bool = true).res('cookies').get({fresh: true});
-            req.url.should.be.equal(host + '/cookies/?fresh=true');
+            var p = api.on('request', xhr => bool = true).cookies.get({fresh: true});
+            req.url.should.be.equal(host + '/cookies?fresh=true');
 
             setTimeout(() => req.respond(200, [], '{a:1}'), 0);
 
@@ -47,6 +49,14 @@ describe('RestClient', () => {
             }).catch(done);
         });
 
+        it('should correct handle form data', () => {
+            var req;
+            xhr.onCreate = r => req = r;
+
+            var p = api.cookies.post(new FormData(), 'multipart/form-data');
+            req.url.should.be.equal(host + '/cookies');
+            (typeof req.requestHeaders['Content-Type']).should.be.equal('undefined');
+        });
     });
 });
 
@@ -248,7 +258,7 @@ describe('resource', () => {
 
             var p = api.cookies.get({fresh: true}).on('success', xhr => respText = xhr.responseText);
 
-            req.respond(200, [], '{a:1}');
+            setTimeout(() => req.respond(200, [], '{a:1}'), 0);
 
             req.url.should.be.equal(host + '/cookies?fresh=true');
             p.then(r => {

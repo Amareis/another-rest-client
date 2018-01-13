@@ -137,7 +137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (contentType) {
 	                var mime = this._opts[contentType];
 	                if (mime && mime.encode) data = safe(mime.encode, data);
-	                xhr.setRequestHeader('Content-Type', contentType);
+	                if (!(contentType === 'multipart/form-data' && data.constructor.name === 'FormData')) xhr.setRequestHeader('Content-Type', contentType);
 	            }
 	
 	            var p = new Promise(function (resolve, reject) {
