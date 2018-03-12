@@ -136,6 +136,22 @@ describe('resource', () => {
             var cookies2 = api.res('cookies');
             cookies.should.be.eql(cookies2);
         });
+
+        it('should add additional shortcuts for custom rules', () => {
+            var r = /(-)(.)/g;
+            var api = new RestClient(host, {shortcutRules: [
+                resName => resName.replace(r, (match, p1, p2) => p2.toUpperCase()),
+            ]});
+
+            api.should.not.have.property('cookies-and-biscuits');
+            api.should.not.have.property('cookiesAndBiscuits');
+
+            var cookiesAndBiscuits = api.res('cookies-and-biscuits');
+
+            cookiesAndBiscuits.should.be.a('function');
+            api['cookies-and-biscuits'].should.be.equal(cookiesAndBiscuits);
+            api.cookiesAndBiscuits.should.be.equal(cookiesAndBiscuits);
+        });
     });
 
     describe('#url()', () => {

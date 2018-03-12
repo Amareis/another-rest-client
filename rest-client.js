@@ -112,6 +112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var currentOptions = this._opts || {
 	                trailing: '',
 	                shortcut: true,
+	                shortcutRules: [],
 	                contentType: 'application/json',
 	                'application/x-www-form-urlencoded': { encode: encodeUrl },
 	                'application/json': { encode: JSON.stringify, decode: JSON.parse }
@@ -211,6 +212,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (shortcut) {
 	                self._shortcuts[resName] = r;
 	                self[resName] = r;
+	                client._opts.shortcutRules.forEach(function (rule) {
+	                    var customShortcut = rule(resName);
+	                    if (customShortcut && typeof customShortcut === 'string') {
+	                        self._shortcuts[customShortcut] = r;
+	                        self[customShortcut] = r;
+	                    }
+	                });
 	            }
 	            return r;
 	        };
