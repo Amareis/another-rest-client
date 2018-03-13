@@ -186,6 +186,22 @@ Local disable of shortcuts can solve some name conflicts (when resource shortcut
 
 **It is strongly recommended do not disable the shortcuts, they greatly enhance code readability.**
 
+You can also add custom shortcuts for resources via rules. Those can be configured via the `shortcutRules` array in the options. When a resource is added all rules will be invoked with the resource name as argument. If the return value is a non-empty string, it will serve as an additional shortcut.
+
+Have a look at this example which will convert strings with dashes into their camel-case counterpart to serve as additional shortcut:
+
+```js
+const DASH_REG = /(-)(.)/g;
+function dashReplace(resourceName) {
+    return resourceName.replace(DASH_REG, (match, p1, p2) => p2.toUpperCase());
+}
+
+var api = new RestClient('http://example.com', {shortcutRules: [ dashReplace ]});
+api.res('engine-rest');
+api['engine-rest']; // standard shortcut
+api.engineRest;     // custom shortcut to improve readability
+```
+
 ### Request content type
 When you call `post`, `put` or `patch`, you pass an object to be encoded into string and sent to the server. But how it will be encoded and what `Content-Type` header will be set?
 By default - in json (`application/json`), using `JSON.stringify`. To change this behavior, you can manually set request content type:

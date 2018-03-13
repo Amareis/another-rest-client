@@ -39,6 +39,7 @@ class RestClient {
         let currentOptions = this._opts || {
             trailing: '',
             shortcut: true,
+            shortcutRules: [],
             contentType: 'application/json',
             'application/x-www-form-urlencoded': {encode: encodeUrl},
             'application/json': {encode: JSON.stringify, decode: JSON.parse}
@@ -136,6 +137,13 @@ function resource(client, parent, name, id, ctx) {
             if (shortcut) {
                 self._shortcuts[resName] = r;
                 self[resName] = r;
+                client._opts.shortcutRules.forEach(rule => {
+                    let customShortcut = rule(resName);
+                    if (customShortcut && typeof customShortcut === 'string') {
+                        self._shortcuts[customShortcut] = r;
+                        self[customShortcut] = r;
+                    }
+                });
             }
             return r;
         };
