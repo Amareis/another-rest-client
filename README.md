@@ -139,6 +139,7 @@ console.log(api.conf());
 {
     trailing: '',
     shortcut: true,
+    shortcutRules: [],
     contentType: 'application/json',
     'application/x-www-form-urlencoded': {encode: encodeUrl},
     'application/json': {encode: JSON.stringify, decode: JSON.parse}
