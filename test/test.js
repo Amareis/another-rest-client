@@ -2,7 +2,7 @@ var should = require('chai').should();
 var sinon = require('sinon');
 var FormData = require('form-data');
 
-var RestClient = require('../rest-client');
+var RestClient = require('../dist/rest-client');
 
 var host = 'http://example.com';
 
