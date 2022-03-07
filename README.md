@@ -272,7 +272,7 @@ That's easy:
 ```bash
 git clone https://github.com/Amareis/another-rest-client.git
 cd another-rest-client
-npm install
+yarn
 echo "//Some changes..." >> src/rest-client.js
-npm run build && npm test
+yarn build && yarn test
 ```
