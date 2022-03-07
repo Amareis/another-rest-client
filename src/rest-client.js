@@ -202,4 +202,8 @@ function resource(client, parent, name, id, ctx) {
     return self;
 }
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 module.exports = RestClient;
