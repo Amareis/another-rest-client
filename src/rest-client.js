@@ -96,11 +96,11 @@ class RestClient {
             }
         );
         new Events(p);
-        setTimeout(() => {
+        Promise.resolve().then(() => {
             this.emit('request', xhr);
             p.emit('request', xhr);
             xhr.send(data);
-        }, 0);
+        });
         return p;
     }
 }

@@ -1,4 +1,4 @@
-var should = require('chai').should();
+require('chai').should();
 var sinon = require('sinon');
 var FormData = require('form-data');
 
