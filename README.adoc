@@ -69,7 +69,7 @@ api.res({       //or it gets object and returns object where resource is availab
         'friends'],
     cats: 0,
     humans:
-        'posts'
+        'posts',
 });
 /* last string is equal to:
 api.res('dogs').res(['toys', 'friends']);
@@ -162,6 +162,7 @@ api = api.withRes('additional-resource')
 == Events
 
 `RestClient` use https://github.com/allouis/minivents[minivents] and emit some events:
+
 - `request` - when `open` XMLHttpRequest, but before `send`.
 - `response` - when get server response.
 - `success` - when get server response with status 200, 201 or 204.
