@@ -1,13 +1,17 @@
-import {Events} from './minivents.js'
+import {Events, Target} from './minivents.js'
 
-function encodeUrl(data) {
-    let res = '';
-    for (let k in data)
-        res += encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) + '&';
-    return res.substr(0, res.length - 1);
+function entries<T extends Record<string, any>>(obj: T): ([Extract<keyof T, string>, any])[] {
+    return Object.entries(obj) as any
 }
 
-function safe(func, data) {
+function encodeUrl(data: Record<string, string | boolean | number>) {
+    let res = '';
+    for (let [k, v] of entries(data))
+        res += encodeURIComponent(k) + '=' + encodeURIComponent(v) + '&';
+    return res.slice(0, res.length - 1);
+}
+
+function safe(func: Function, data: any) {
     try {
         return func(data);
     }
@@ -20,37 +24,78 @@ function safe(func, data) {
     }
 }
 
-export default class RestClient {
-    constructor(host, options) {
+export type CustomShortcut = (resName: string) => string
+
+export type Encodings = {
+    [mime: string]: {
+        encode?: (data: any) => string
+        decode?: (xhrResponse: string) => any
+    }
+}
+
+export type Opts = {
+    trailing: string
+    shortcut: boolean
+    shortcutRules: CustomShortcut[]
+    contentType: string
+    encodings: Encodings
+}
+
+export class RestClient implements Target, Res {
+    host: string
+
+    _opts: Opts = {
+        trailing: '',
+        shortcut: true,
+        shortcutRules: [],
+        contentType: 'application/json',
+        encodings: {
+            'application/x-www-form-urlencoded': {encode: encodeUrl},
+            'application/json': {encode: JSON.stringify, decode: JSON.parse},
+        }
+    }
+
+    emit!: Target['emit']
+    on!: Target['on']
+    off!: Target['off']
+
+    constructor(host: string, options: Partial<Opts> & Encodings) {
         this.host = host;
         this.conf(options);
 
         Events(this);
 
         // resource must be super class of RestClient
-        // but fucking js cannot into callable objects, so...
+        // but js cannot into callable objects, so...
         // After this call all resource methods will be defined
         // on current RestClient instance (this behaviour affected by last parameter)
-        // At least this parameters are symmetric :D
+        // At least parameters are symmetric :D
         resource(this, undefined, '', undefined, this);
     }
 
-    conf(options={}) {
-        let currentOptions = this._opts || {
-            trailing: '',
-            shortcut: true,
-            shortcutRules: [],
-            contentType: 'application/json',
-            'application/x-www-form-urlencoded': {encode: encodeUrl},
-            'application/json': {encode: JSON.stringify, decode: JSON.parse}
+    conf(options: Partial<Opts> = {}): Opts {
+        for (const [k, v] of entries(options)) {
+            if (k === 'encodings') {
+                Object.assign(this._opts.encodings, v)
+                continue
+            }
+
+            if (k in this._opts)
+                (this._opts as any)[k] = v
+            else {
+                this._opts.encodings[k] = v
+                console.warn(`There is no option '${k}' in another-rest-client options. Probably this is encoding and should be in 'encodings' option!`)
+            }
+        }
+
+        return {
+            ...this._opts,
+            encodings: {...this._opts.encodings},
+            shortcutRules: [...this._opts.shortcutRules],
         };
-
-        this._opts = Object.assign(currentOptions, options);
-
-        return Object.assign({}, this._opts);
     }
 
-    _request(method, url, data=null, contentType=null) {
+    _request(method: string, url: string, data: any = null, contentType: string | null = null) {
         if (url.indexOf('?') === -1)
             url += this._opts.trailing;
         else
@@ -60,14 +105,14 @@ export default class RestClient {
         xhr.open(method, this.host + url, true);
 
         if (contentType) {
-            let mime = this._opts[contentType];
+            let mime = this._opts.encodings[contentType];
             if (mime && mime.encode)
                 data = safe(mime.encode, data);
-            if (!(contentType === 'multipart/form-data' && data.constructor.name === 'FormData'))
+            if (!(contentType === 'multipart/form-data' && data instanceof FormData))
                 xhr.setRequestHeader('Content-Type', contentType);
         }
 
-        let p = new Promise((resolve, reject) =>
+        let p = Events(new Promise((resolve, reject) =>
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     this.emit('response', xhr);
@@ -80,7 +125,7 @@ export default class RestClient {
                         let responseHeader = xhr.getResponseHeader('Content-Type');
                         if (responseHeader) {
                             let responseContentType = responseHeader.split(';')[0];
-                            let mime = this._opts[responseContentType];
+                            let mime = this._opts.encodings[responseContentType];
                             if (mime && mime.decode)
                                 res = safe(mime.decode, res);
                         }
@@ -94,8 +139,7 @@ export default class RestClient {
                     }
                 }
             }
-        );
-        Events(p);
+        ))
         Promise.resolve().then(() => {
             this.emit('request', xhr);
             p.emit('request', xhr);
@@ -105,8 +149,13 @@ export default class RestClient {
     }
 }
 
-function resource(client, parent, name, id, ctx) {
-    let self = ctx ? ctx : (newId) => {
+interface Res {
+    _shortcuts: Record<string, Res>
+    _resources: Record<string, Res>
+}
+
+function resource(client: RestClient, parent: Res | undefined, name: string, id: string | undefined, ctx?: Res): Res {
+    let self: Res = ctx ? ctx : (newId?: string) => {
         if (newId === undefined)
             return self;
         return self._clone(parent, newId);
@@ -115,7 +164,7 @@ function resource(client, parent, name, id, ctx) {
     self._resources = {};
     self._shortcuts = {};
 
-    self._clone = (parent, newId) => {
+    self._clone = (parent: Res, newId: string) => {
         let copy = resource(client, parent, name, newId);
         copy._shortcuts = self._shortcuts;
         for (let resName in self._resources) {
@@ -128,7 +177,7 @@ function resource(client, parent, name, id, ctx) {
     };
 
     self.res = (resources, shortcut=client._opts.shortcut) => {
-        let makeRes = (resName) => {
+        let makeRes = (resName: string) => {
             if (resName in self._resources)
                 return self._resources[resName];
 
@@ -137,19 +186,19 @@ function resource(client, parent, name, id, ctx) {
             if (shortcut) {
                 self._shortcuts[resName] = r;
                 self[resName] = r;
-                client._opts.shortcutRules.forEach(rule => {
+                for (const rule of client._opts.shortcutRules) {
                     let customShortcut = rule(resName);
                     if (customShortcut && typeof customShortcut === 'string') {
                         self._shortcuts[customShortcut] = r;
                         self[customShortcut] = r;
                     }
-                });
+                }
             }
             return r;
         };
 
-        // (resources instanceof String) don't work. Fuck you, javascript.
-        if (resources.constructor === String)
+        // (resources instanceof String) don't work in js.
+        if (typeof resources === 'string')
             return makeRes(resources);
 
         if (resources instanceof Array)
@@ -199,8 +248,9 @@ function resource(client, parent, name, id, ctx) {
     self.delete = () => {
         return client._request('DELETE', self.url());
     };
+
     return self;
 }
 
-export {RestClient}
+export default RestClient
 

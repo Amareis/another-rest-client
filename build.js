@@ -16,7 +16,7 @@ let footer = `(function (root, factory) {
 	  value: true
 	});
   } else {
-    root.${globalName} = factory();
+    root.${globalName} = factory().default;
   }
 }(typeof self !== 'undefined' ? self : this, () => ${globalName}));`;
 

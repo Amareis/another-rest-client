@@ -5,8 +5,10 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "ES2021",
+      "DOM"
+    ]
   },
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Recommended"
 }

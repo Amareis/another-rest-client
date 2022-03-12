@@ -8,6 +8,8 @@ To prove my words, here is an minimal working code (you can explore more example
 
 [source,js]
 ----
+import {RestClient} from 'another-rest-client'
+
 const api = new RestClient('https://api.github.com');
 api.res({repos: 'releases'});
 
@@ -34,8 +36,8 @@ Now, add it in script tag or require it or import it:
 
 [source,js]
 ----
-const RestClient = require('another-rest-client');
-import RestClient from 'another-rest-client'
+const {RestClient} = require('another-rest-client');
+import {RestClient} from 'another-rest-client'
 ----
 
 *ATTENTION:* If you want to use another-rest-client with node.js, you must define XMLHttpRequest before import (https://github.com/driverdan/node-XMLHttpRequest[see here]):
@@ -178,12 +180,14 @@ All configuration is done using the object passed to the constructor or method `
 console.log(api.conf());
 /* Defaults:
 {
-    trailing: '',
-    shortcut: true,
-    shortcutRules: [],
-    contentType: 'application/json',
-    'application/x-www-form-urlencoded': {encode: encodeUrl},
-    'application/json': {encode: JSON.stringify, decode: JSON.parse}
+    "trailing": "",
+    "shortcut": true,
+    "shortcutRules": [],
+    "contentType": "application/json",
+    "encodings": {
+        "application/x-www-form-urlencoded": {encode: encodeUrl},
+        "application/json": {encode: JSON.stringify, decode: JSON.parse}
+    }
 }*/
 ----
 
@@ -278,10 +282,12 @@ By default RestClient can encode data in `application/json` and `application/x-w
 ----
 const opts = {
     contentType: 'application/x-my-cool-mime',
-    'application/x-my-cool-mime': {
-        encode: (objectPassedToPostPutOrPatch) => {
-            //...
-            return encodedToStringObject;
+    encodings: {
+        'application/x-my-cool-mime': {
+            encode: (objectPassedToPostPutOrPatch) => {
+                //...
+                return encodedToStringObject;
+            }
         }
     }
 }
@@ -299,10 +305,12 @@ When server answers, it give `Content-Type` header. another-rest-client smart en
 [source,js]
 ----
 const opts = {
-    'application/x-my-cool-mime': {
-        decode: (stringFromXhrResponseText) => {
-            //...
-            return decodedFromStringObject;
+    encodings: {
+        'application/x-my-cool-mime': {
+            decode: (stringFromXhrResponseText) => {
+                //...
+                return decodedFromStringObject;
+            }
         }
     }
 }
@@ -319,17 +327,20 @@ Of course, you can combine encoders and decoders for single MIME:
 ----
 const opts = {
     contentType: 'application/x-my-cool-mime',
-    'application/x-my-cool-mime': {
-        encode: (objectPassedToPostPutOrPatch) => {
-            //...
-            return encodedToStringObject;
-        },
-        decode: (stringFromXhrResponseText) => {
-            //...
-            return decodedFromStringObject;
+    encodings: {
+        'application/x-my-cool-mime': {
+            encode: (objectPassedToPostPutOrPatch) => {
+                //...
+                return encodedToStringObject;
+            },
+            decode: (stringFromXhrResponseText) => {
+                //...
+                return decodedFromStringObject;
+            }
         }
     }
 }
+
 const api = new RestClient('https://example.com', opts);
 //or by conf
 api.conf(opts);
