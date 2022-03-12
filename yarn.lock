@@ -564,11 +564,6 @@ minimatch@^3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-minivents@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/minivents/-/minivents-2.2.0.tgz#559492edc04bc00b62168850af5b8ca06d5e088b"
-  integrity sha1-VZSS7cBLwAtiFohQr1uMoG1eCIs=
-
 mocha@^9.2.1:
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-9.2.1.tgz#a1abb675aa9a8490798503af57e8782a78f1338e"
@@ -767,6 +762,11 @@ type-detect@4.0.8, type-detect@^4.0.0, type-detect@^4.0.5, type-detect@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
+
+typescript@^4.6.2:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.2.tgz#fe12d2727b708f4eef40f51598b3398baa9611d4"
+  integrity sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg==
 
 which@2.0.2:
   version "2.0.2"

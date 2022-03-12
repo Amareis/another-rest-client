@@ -1,4 +1,4 @@
-import Events from 'minivents'
+import {Events} from './minivents.js'
 
 function encodeUrl(data) {
     let res = '';
@@ -20,12 +20,12 @@ function safe(func, data) {
     }
 }
 
-class RestClient {
+export default class RestClient {
     constructor(host, options) {
         this.host = host;
         this.conf(options);
 
-        new Events(this);
+        Events(this);
 
         // resource must be super class of RestClient
         // but fucking js cannot into callable objects, so...
@@ -95,7 +95,7 @@ class RestClient {
                 }
             }
         );
-        new Events(p);
+        Events(p);
         Promise.resolve().then(() => {
             this.emit('request', xhr);
             p.emit('request', xhr);
@@ -202,8 +202,5 @@ function resource(client, parent, name, id, ctx) {
     return self;
 }
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+export {RestClient}
 
-module.exports = RestClient;

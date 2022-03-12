@@ -12,6 +12,9 @@ let footer = `(function (root, factory) {
     define(factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
+    Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
   } else {
     root.${globalName} = factory();
   }

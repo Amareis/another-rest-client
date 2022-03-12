@@ -1,17 +1,17 @@
 require('chai').should();
-var sinon = require('sinon');
-var FormData = require('form-data');
+const sinon = require('sinon');
+const FormData = require('form-data');
 
-var RestClient = require('../dist/rest-client');
+const {RestClient} = require('../dist/rest-client');
 
-var host = 'http://example.com';
+const host = 'https://example.com';
 
 xhr = global.XMLHttpRequest = sinon.useFakeXMLHttpRequest();
 global.FormData = FormData;
 
 describe('RestClient', () => {
     describe('#_request()', () => {
-        var api;
+        let api;
 
         beforeEach(() => {
             api = new RestClient(host);
@@ -19,7 +19,7 @@ describe('RestClient', () => {
         });
 
         it('should append trailing symbol which passed to constructor', () => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
             new RestClient(host, {trailing: '/'}).res('cookies').get();
@@ -27,7 +27,7 @@ describe('RestClient', () => {
         });
 
         it('should append trailing symbol before args', () => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
             new RestClient(host, {trailing: '/'}).res('cookies').get({fresh: true});
@@ -35,10 +35,10 @@ describe('RestClient', () => {
         });
 
         it('should emit events', (done) => {
-            var req, bool;
+            let req, bool;
             xhr.onCreate = r => req = r;
 
-            var p = api.on('request', xhr => bool = true).cookies.get({fresh: true});
+            const p = api.on('request', xhr => bool = true).cookies.get({fresh: true});
             req.url.should.be.equal(host + '/cookies?fresh=true');
 
             setTimeout(() => req.respond(200, [], '{a:1}'), 0);
@@ -50,10 +50,10 @@ describe('RestClient', () => {
         });
 
         it('should correct handle form data', () => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
-            var p = api.cookies.post(new FormData(), 'multipart/form-data');
+            const p = api.cookies.post(new FormData(), 'multipart/form-data');
             req.url.should.be.equal(host + '/cookies');
             (typeof req.requestHeaders['Content-Type']).should.be.equal('undefined');
         });
@@ -63,22 +63,22 @@ describe('RestClient', () => {
 
 describe('resource', () => {
     describe('#res()', () => {
-        var api;
+        let api;
 
         beforeEach(() => api = new RestClient(host));
 
         it('should accept resource name and return resource', () => {
-            var cookies = api.res('cookies');
+            const cookies = api.res('cookies');
             cookies.should.be.a('function');
         });
 
         it('should accept array of resource names and return array of resources', () => {
-            var t = api.res(['bees', 'cows']);
+            const t = api.res(['bees', 'cows']);
             t.should.be.an('array');
         });
 
         it('should accept object of resource names and return object of resources', () => {
-            var t = api.res({
+            const t = api.res({
                 'bees': [
                     'big',
                     'small'
@@ -103,7 +103,7 @@ describe('resource', () => {
 
         it('should make a shortcut for resource by default', () => {
             api.should.not.have.property('cookies');
-            var cookies = api.res('cookies');
+            const cookies = api.res('cookies');
             api.cookies.should.be.equal(cookies);
         });
 
@@ -111,42 +111,44 @@ describe('resource', () => {
             api.should.not.have.property('cookies');
             api.should.not.have.property('cows');
 
-            var arr = api.res(['cookies', 'cows']);
+            const arr = api.res(['cookies', 'cows']);
 
             api.cookies.should.be.equal(arr[0]);
             api.cows.should.be.equal(arr[1]);
         });
 
         it('should not make a shortcut if pass option to constructor', () => {
-            var api = new RestClient(host, {shortcut: false});
+            const api = new RestClient(host, {shortcut: false});
             api.should.not.have.property('cookies');
-            var cookies = api.res('cookies');
+            const cookies = api.res('cookies');
             api.should.not.have.property('cookies');
         });
 
         it('should not make a shortcut if pass false to second option', () => {
             api.should.not.have.property('cookies');
-            var cookies = api.res('cookies', false);
+            const cookies = api.res('cookies', false);
             api.should.not.have.property('cookies');
         });
 
         it('should cache created resources', () => {
-            var cookies = api.res('cookies');
+            const cookies = api.res('cookies');
             cookies.should.be.a('function');
-            var cookies2 = api.res('cookies');
+            const cookies2 = api.res('cookies');
             cookies.should.be.eql(cookies2);
         });
 
         it('should add additional shortcuts for custom rules', () => {
-            var r = /(-)(.)/g;
-            var api = new RestClient(host, {shortcutRules: [
-                resName => resName.replace(r, (match, p1, p2) => p2.toUpperCase()),
-            ]});
+            const r = /(-)(.)/g;
+            const api = new RestClient(host, {
+                shortcutRules: [
+                    resName => resName.replace(r, (match, p1, p2) => p2.toUpperCase()),
+                ]
+            });
 
             api.should.not.have.property('cookies-and-biscuits');
             api.should.not.have.property('cookiesAndBiscuits');
 
-            var cookiesAndBiscuits = api.res('cookies-and-biscuits');
+            const cookiesAndBiscuits = api.res('cookies-and-biscuits');
 
             cookiesAndBiscuits.should.be.a('function');
             api['cookies-and-biscuits'].should.be.equal(cookiesAndBiscuits);
@@ -155,7 +157,7 @@ describe('resource', () => {
     });
 
     describe('#url()', () => {
-        var api;
+        let api;
 
         beforeEach(() => {
             api = new RestClient(host);
@@ -183,7 +185,7 @@ describe('resource', () => {
     });
 
     describe('#get()', () => {
-        var api;
+        let api;
 
         beforeEach(() => {
             api = new RestClient(host);
@@ -191,7 +193,7 @@ describe('resource', () => {
         });
 
         it('should correct form query args when get one instance', () => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
             api.cookies(4).get();
@@ -199,7 +201,7 @@ describe('resource', () => {
         });
 
         it('should correct form query args when get multiply instances', () => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
             api.cookies.get({fresh: true});
@@ -207,7 +209,7 @@ describe('resource', () => {
         });
 
         it('should correct form query args when get multiply args', () => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
             api.cookies.get({'filter[]': 'fresh'}, {'filter[]': 'taste'});
@@ -215,10 +217,10 @@ describe('resource', () => {
         });
 
         it('should work correctly with an undefined content type', (done) => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
-            var p = api.cookies.get({fresh: true});
+            const p = api.cookies.get({fresh: true});
 
             req.respond(200, [], '{a:1}');
 
@@ -230,10 +232,10 @@ describe('resource', () => {
         });
 
         it('should correctly parse response', (done) => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
-            var p = api.cookies.get({fresh: true});
+            const p = api.cookies.get({fresh: true});
 
             req.respond(200, {'Content-Type': 'application/json'}, '{"a":"1df"}');
 
@@ -245,12 +247,12 @@ describe('resource', () => {
         });
 
         it('should correctly handle exception with wrong encoded response body', (done) => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
             sinon.spy(console, 'error');
             sinon.spy(console, 'log');
 
-            var p = api.cookies.get({fresh: true});
+            const p = api.cookies.get({fresh: true});
 
             req.respond(200, {'Content-Type': 'application/json'}, '{"a":1df}');
 
@@ -267,12 +269,12 @@ describe('resource', () => {
         });
 
         it('should emit once event', (done) => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
-            var respText;
+            let respText;
 
-            var p = api.cookies.get({fresh: true}).on('success', xhr => respText = xhr.responseText);
+            const p = api.cookies.get({fresh: true}).on('success', xhr => respText = xhr.responseText);
 
             setTimeout(() => req.respond(200, [], '{a:1}'), 0);
 
@@ -285,12 +287,12 @@ describe('resource', () => {
         });
 
         it('should emit once request event', (done) => {
-            var req;
+            let req;
             xhr.onCreate = r => req = r;
 
-            var bool;
+            let bool;
 
-            var p = api.cookies.get({fresh: true}).on('request', xhr => bool = true);
+            const p = api.cookies.get({fresh: true}).on('request', xhr => bool = true);
 
             setTimeout(() => req.respond(200, [], '{a:1}'), 0);
 
