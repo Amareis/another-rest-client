@@ -2,7 +2,7 @@
 
 Simple REST API client that makes your code lesser and more beautiful than without it.
 
-There is some rest clients - https://github.com/marmelab/restful.js[restful.js], https://github.com/cujojs/rest[cujojs/rest] or https://github.com/lincolnloop/amygdala[amygdala] - so why you need another rest client? Because with it your code less and more beautiful than without it or with any analogs. Also, its code really simple - less than 200 sloc and (almost) without magic, so you can just read it (and fix, may be?) if something go wrong.
+There is some rest clients - https://github.com/marmelab/restful.js[restful.js], https://github.com/cujojs/rest[cujojs/rest] or https://github.com/lincolnloop/amygdala[amygdala] - so why you need another rest client? First, because all of this is not maintained anymore :) But also, because with it your code less and more beautiful than without it or with any analogs. Also, its code really simple - less than 300 sloc and (almost) without magic, so you can just read it (and fix, may be?) if something go wrong.
 
 To prove my words, here is an minimal working code (you can explore more examples https://github.com/Amareis/another-rest-client/tree/master/examples[here]):
 
@@ -157,7 +157,7 @@ You can then add more resources reusing already typed resource:
 api = api.withRes('additional-resource')
 ----
 
-**Custom shortcuts currently not working with TypeScript!**
+**Custom shortcuts currently not working with TypeScript! And shorcuts always will be in typings, even if they are disabled.**
 
 == Events
 
