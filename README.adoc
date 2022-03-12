@@ -1,4 +1,4 @@
-= another-rest-client image:https://travis-ci.org/Amareis/another-rest-client.svg?branch=master[Build Status,link=https://travis-ci.org/Amareis/another-rest-client]
+= another-rest-client
 
 Simple REST API client that makes your code lesser and more beautiful than without it.
 
