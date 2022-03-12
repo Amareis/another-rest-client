@@ -17,11 +17,11 @@ const api = new RestClient('https://api.github.com').withRes({
 } as const)
 
 api.repos('Amareis/another-rest-client').releases('latest').get().then((release: any) => {
-    console.log(release);
-    document.write('Latest release of another-rest-client:<br>');
-    document.write('Published at: ' + release.published_at + '<br>');
-    document.write('Tag: ' + release.tag_name + '<br>');
-});
+    console.log(release)
+    document.write('Latest release of another-rest-client:<br>')
+    document.write('Published at: ' + release.published_at + '<br>')
+    document.write('Tag: ' + release.tag_name + '<br>')
+})
 ----
 
 == Installation
@@ -39,7 +39,7 @@ Now, add it in script tag or require it or import it:
 
 [source,js]
 ----
-const {RestClient} = require('another-rest-client');
+const {RestClient} = require('another-rest-client')
 import {RestClient} from 'another-rest-client'
 ----
 
@@ -47,22 +47,22 @@ import {RestClient} from 'another-rest-client'
 
 [source,js]
 ----
-global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 ----
 
 == Usage
 
 [source,js]
 ----
-const api = new RestClient('https://example.com');
+const api = new RestClient('https://example.com')
 ----
 
 And here we go! First, let's define resources, using `res` method:
 
 [source,js]
 ----
-api.res('cookies');         //it gets resource name and returns resource
-api.res(['cows', 'bees']);  //or it gets array of resource names and returns array of resources
+api.res('cookies')         //it gets resource name and returns resource
+api.res(['cows', 'bees'])  //or it gets array of resource names and returns array of resources
 api.res({       //or it gets object and returns object where resource is available by name
     dogs: [
         'toys',
@@ -70,70 +70,70 @@ api.res({       //or it gets object and returns object where resource is availab
     cats: 0,
     humans:
         'posts',
-});
+})
 /* last string is equal to:
-api.res('dogs').res(['toys', 'friends']);
-api.res('cats');
-api.res('humans').res('posts'); */
+api.res('dogs').res(['toys', 'friends'])
+api.res('cats')
+api.res('humans').res('posts') */
 ----
 
 Now we can query our resources using methods `get` (optionally gets query args), `post`, `put`, `patch` (gets body content) and `delete`. All these methods returns promise, that resolves with object that given by server or rejects with `XMLHttpRequest` instance:
 
 [source,js]
 ----
-api.cookies.get();              //GET https://example.com/cookies
-api.cookies.get({fresh: true}); //GET https://example.com/cookies?fresh=true
-api.cookies.get({'filter[]': 'fresh'}, {'filter[]': 'taste'}); //GET https://example.com/cookies?filter%5B%5D=fresh&filter%5B%5D=taste
+api.cookies.get()              //GET https://example.com/cookies
+api.cookies.get({fresh: true}) //GET https://example.com/cookies?fresh=true
+api.cookies.get({'filter[]': 'fresh'}, {'filter[]': 'taste'}) //GET https://example.com/cookies?filter%5B%5D=fresh&filter%5B%5D=taste
 
 //POST https://example.com/cows, body="{"color":"white","name":"Moo"}"
 api.cows.post({color: 'white', name: 'Moo'}).then((cow) => {
-    console.log(cow);    //just object, i.e. {id: 123, name: 'Moo', color: 'white'}
+    console.log(cow)    //just object, i.e. {id: 123, name: 'Moo', color: 'white'}
 }, (xhr) => {
-    console.log(xhr);   //XMLHtppRequest instance
-});
+    console.log(xhr)   //XMLHtppRequest instance
+})
 ----
 
 If you want query single resource instance, just pass it id into resource:
 
 [source,js]
 ----
-api.cookies(42).get();  //GET https://example.com/cookies/42
+api.cookies(42).get()  //GET https://example.com/cookies/42
 
 //GET https://example.com/cookies/42?fields=ingridients,baker
-api.cookies(42).get({fields: ['ingridients', 'baker']});
+api.cookies(42).get({fields: ['ingridients', 'baker']})
 
-api.bees(12).put({state: 'dead'});  //PUT https://example.com/bees/12, body="{"state":"dead"}"
-api.cats(64).patch({age: 3});       //PATCH https://example.com/cats/64, body="{"age":3}"
+api.bees(12).put({state: 'dead'})  //PUT https://example.com/bees/12, body="{"state":"dead"}"
+api.cats(64).patch({age: 3})       //PATCH https://example.com/cats/64, body="{"age":3}"
 ----
 
 You can query subresources easily:
 
 [source,js]
 ----
-api.dogs(1337).toys.get();          //GET https://example.com/dogs/1337/toys
-api.dogs(1337).friends(2).delete(); //DELETE https://example.com/dogs/1337/friends/2
+api.dogs(1337).toys.get()          //GET https://example.com/dogs/1337/toys
+api.dogs(1337).friends(2).delete() //DELETE https://example.com/dogs/1337/friends/2
 
 //POST https://example.com/humans/me/posts, body="{"site":"habrahabr.ru","nick":"Amareis"}"
-api.humans('me').posts.post({site: 'habrahabr.ru', nick: 'Amareis'});
+api.humans('me').posts.post({site: 'habrahabr.ru', nick: 'Amareis'})
 ----
 
 You can use `url` resource method to get resource url:
 
 [source,js]
 ----
-api.dogs.url() === '/dogs';
-api.dogs(1337).friends(1).url() === '/dogs/1337/friends/1';
+api.dogs.url() === '/dogs'
+api.dogs(1337).friends(1).url() === '/dogs/1337/friends/1'
 ----
 
 And, of course, you always can use ES6 async/await to make your code more readable:
 
 [source,js]
 ----
-const me = api.humans('me');
-const i = await me.get();
-console.log(i);    //just object, i.e. {id: 1, name: 'Amareis', profession: 'programmer'}
+const me = api.humans('me')
+const i = await me.get()
+console.log(i)    //just object, i.e. {id: 1, name: 'Amareis', profession: 'programmer'}
 const post = await me.posts.post({site: 'habrahabr.ru', nick: i.name})
-console.log(post);  //object
+console.log(post)  //object
 ----
 == TypeScript
 
@@ -175,23 +175,23 @@ Often use case - authorization:
 [source,js]
 ----
 api.on('request', xhr => {
-    xhr.setRequestHeader('Authorization', 'Bearer xxxTOKENxxx');
-});
+    xhr.setRequestHeader('Authorization', 'Bearer xxxTOKENxxx')
+})
 ----
 
 Also, returns by `get`, `post`, `put`, `patch` and `delete` `Promise` objects also emit these events, but only for current request.
 
 [source,js]
 ----
-api.dogs(1337).toys.get().on('success', console.log.bind(console)).then(toys => "..."); //in log will be xhr instance
-api.dogs(1337).toys.get().then(toys => "..."); //log is clear
+api.dogs(1337).toys.get().on('success', console.log.bind(console)).then(toys => "...") //in log will be xhr instance
+api.dogs(1337).toys.get().then(toys => "...") //log is clear
 ----
 
 You can use events to set `responseType` XMLHttpRequest property, to handle binary files (and you can compose it with custom decoders, as described below, to automatically convert blob to File object):
 
 [source,js]
 ----
-api.files('presentation.pdf').get().on('request', xhr => xhr.responseType = 'blob').then(blobObj => "...");
+api.files('presentation.pdf').get().on('request', xhr => xhr.responseType = 'blob').then(blobObj => "...")
 ----
 
 == Configuration
@@ -204,7 +204,7 @@ All configuration is done using the object passed to the constructor or method `
 
 [source,js]
 ----
-console.log(api.conf());
+console.log(api.conf())
 /* Defaults:
 {
     "trailing": "",
@@ -222,7 +222,7 @@ If you want change RestClient host (lol why?..), you can just:
 
 [source,js]
 ----
-api.host = 'https://example2.com';
+api.host = 'https://example2.com'
 ----
 
 === Trailing symbol
@@ -231,12 +231,12 @@ Some APIs require trailing slash (for example, this is the default behavior in t
 
 [source,js]
 ----
-const api = new RestClient('https://example.com', {trailing: '/'});
+const api = new RestClient('https://example.com', {trailing: '/'})
 //or
-api.conf({trailing: '/'});
+api.conf({trailing: '/'})
 ----
 
-Of course, you can pass all you want (`{trailing: &#39;/i-have-no-idea-why-you-want-this-but-you-can/&#39;}`).
+Of course, you can pass all you want (`{trailing: &#39/i-have-no-idea-why-you-want-this-but-you-can/&#39}`).
 
 === Shortcuts
 
@@ -244,9 +244,9 @@ Shortcuts - resources and subresources, that accessible as parent resource field
 
 [source,js]
 ----
-api.cars === undefined;
-const cars = api.res('cars');
-api.cars === cars;   //api.cars is shortcut for 'cars' resource
+api.cars === undefined
+const cars = api.res('cars')
+api.cars === cars   //api.cars is shortcut for 'cars' resource
 ----
 
 By default, another-rest-client will make shortcuts for defined resources. This behavior can be disabled in three ways:
@@ -256,14 +256,14 @@ By default, another-rest-client will make shortcuts for defined resources. This 
 api.sounds === undefined
 
 //first way
-const api = new RestClient('https://example.com', {shortcut: false});
+const api = new RestClient('https://example.com', {shortcut: false})
 //or, second way
-api.conf({shortcut: false});
+api.conf({shortcut: false})
 //or, third way
-const sounds = api.res('sounds', false);
+const sounds = api.res('sounds', false)
 
 //and, still...
-api.sounds === undefined;
+api.sounds === undefined
 ----
 
 First two ways disables shortcuts globally - on all resources and subresources. Third way disables shortcuts locally - in one `res` call. Also, with third way you can locally _enable_ shortcuts (pass `true` as second `res` argument) when globally they are disabled.
@@ -278,15 +278,15 @@ Have a look at this example which will convert strings with dashes into their ca
 
 [source,js]
 ----
-const DASH_REG = /(-)(.)/g;
+const DASH_REG = /(-)(.)/g
 function dashReplace(resourceName) {
-    return resourceName.replace(DASH_REG, (match, p1, p2) => p2.toUpperCase());
+    return resourceName.replace(DASH_REG, (match, p1, p2) => p2.toUpperCase())
 }
 
-const api = new RestClient('https://example.com', {shortcutRules: [ dashReplace ]});
-api.res('engine-rest');
-api['engine-rest']; // standard shortcut
-api.engineRest;     // custom shortcut to improve readability
+const api = new RestClient('https://example.com', {shortcutRules: [ dashReplace ]})
+api.res('engine-rest')
+api['engine-rest'] // standard shortcut
+api.engineRest     // custom shortcut to improve readability
 ----
 
 === Request content type
@@ -296,11 +296,11 @@ By default - in json (`application/json`), using `JSON.stringify`. To change thi
 
 [source,js]
 ----
-const api = new RestClient('https://example.com', {contentType: 'application/x-www-form-urlencoded'});
+const api = new RestClient('https://example.com', {contentType: 'application/x-www-form-urlencoded'})
 //or by conf
-api.conf({contentType: 'application/x-www-form-urlencoded'});
+api.conf({contentType: 'application/x-www-form-urlencoded'})
 //or by second argument in 'post', 'put' or 'patch'
-api.cookies.post({fresh: true}, 'application/x-www-form-urlencoded');
+api.cookies.post({fresh: true}, 'application/x-www-form-urlencoded')
 ----
 
 By default RestClient can encode data in `application/json` and `application/x-www-form-urlencoded`. You can add (or replace defaults with) your own encoders:
@@ -313,14 +313,14 @@ const opts = {
         'application/x-my-cool-mime': {
             encode: (objectPassedToPostPutOrPatch) => {
                 //...
-                return encodedToStringObject;
+                return encodedToStringObject
             }
         }
     }
 }
-const api = new RestClient('https://example.com', opts);
+const api = new RestClient('https://example.com', opts)
 //or by conf
-api.conf(opts);
+api.conf(opts)
 ----
 
 If there is no suitable encoder, passed object will be passed to the XMLHttpRequest.send without changes.
@@ -336,14 +336,14 @@ const opts = {
         'application/x-my-cool-mime': {
             decode: (stringFromXhrResponseText) => {
                 //...
-                return decodedFromStringObject;
+                return decodedFromStringObject
             }
         }
     }
 }
-const api = new RestClient('https://example.com', opts);
+const api = new RestClient('https://example.com', opts)
 //or by conf
-api.conf(opts);
+api.conf(opts)
 ----
 
 If there is no suitable decoder (or server given't `Content-Type` header), gotten `XMLHttpRequest.response` will be passed to Promise.resolve without changes.
@@ -358,19 +358,19 @@ const opts = {
         'application/x-my-cool-mime': {
             encode: (objectPassedToPostPutOrPatch) => {
                 //...
-                return encodedToStringObject;
+                return encodedToStringObject
             },
             decode: (stringFromXhrResponseText) => {
                 //...
-                return decodedFromStringObject;
+                return decodedFromStringObject
             }
         }
     }
 }
 
-const api = new RestClient('https://example.com', opts);
+const api = new RestClient('https://example.com', opts)
 //or by conf
-api.conf(opts);
+api.conf(opts)
 ----
 
 == Contributing
