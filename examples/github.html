@@ -1,5 +1,6 @@
-<html>
+<html lang="en">
 <head>
+    <title>another-rest-client</title>
     <script src="../dist/rest-client.js"></script>
     <script>
         window.onload = function () {
@@ -8,11 +9,12 @@
 
             window.api = api;
 
-            api.repos('Amareis/another-rest-client').releases('latest').get().then(function(release){
+            api.repos('Amareis/another-rest-client').releases('latest').get().then((release) => {
                 console.log(release);
-                document.write('Latest release of another-rest-client:<br>');
-                document.write('Published at: ' + release.published_at + '<br>');
-                document.write('Tag: ' + release.tag_name + '<br>');
+                document.body.innerHTML =
+                    'Latest release of another-rest-client:<br>' +
+                    `Published at: ${release.published_at}<br>` +
+                    `Tag: ${release.tag_name}<br>`
             });
         }
     </script>
