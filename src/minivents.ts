@@ -8,7 +8,7 @@ export type Target = {
 
 export function Events<T>(target: T): T & Target {
     const t: T & Target = target as any
-    let events: Record<string, [Listener, any]> = {};
+    let events: Record<string, [Listener, any]> = {}
     /**
      *  On: listen to events
      */
@@ -21,8 +21,8 @@ export function Events<T>(target: T): T & Target {
      */
     t.off = function(type, func) {
         if (!type) events = {}
-        const list = events[type as any] || [];
-        let i = func ? list.length : 0;
+        const list = events[type as any] || []
+        let i = func ? list.length : 0
         while (i--) func == list[i][0] && list.splice(i, 1)
         return t
     }
@@ -30,11 +30,11 @@ export function Events<T>(target: T): T & Target {
      * Emit: send event, callbacks will be triggered
      */
     t.emit = function(type: string, ...args: any[]){
-        const e = events[type] || [], list = e.length > 0 ? e.slice(0, e.length) : e;
-        let i = 0, j;
+        const e = events[type] || [], list = e.length > 0 ? e.slice(0, e.length) : e
+        let i = 0, j
         while (j = list[i++]) j[0].apply(j[1], args)
         return t
-    };
+    }
 
     return t
 }

@@ -6,14 +6,17 @@ There is some rest clients - https://github.com/marmelab/restful.js[restful.js],
 
 To prove my words, here is an minimal working code (you can explore more examples https://github.com/Amareis/another-rest-client/tree/master/examples[here]):
 
-[source,js]
+And it works with typescript!
+
+[source,typescript]
 ----
 import {RestClient} from 'another-rest-client'
 
-const api = new RestClient('https://api.github.com');
-api.res({repos: 'releases'});
+const api = new RestClient('https://api.github.com').withRes({
+    repos: 'releases',
+} as const)
 
-api.repos('Amareis/another-rest-client').releases('latest').get().then((release) => {
+api.repos('Amareis/another-rest-client').releases('latest').get().then((release: any) => {
     console.log(release);
     document.write('Latest release of another-rest-client:<br>');
     document.write('Published at: ' + release.published_at + '<br>');
@@ -132,6 +135,29 @@ console.log(i);    //just object, i.e. {id: 1, name: 'Amareis', profession: 'pro
 const post = await me.posts.post({site: 'habrahabr.ru', nick: i.name})
 console.log(post);  //object
 ----
+== TypeScript
+
+Library infer types from schema, passed to `res`. But it returns new resource (or array or object), so to use it
+correctly, you need to use `withRes` method, which returns modified original resource:
+
+[source,typescript]
+----
+let api = new RestClient('https://api.github.com').withRes({
+    repos: 'releases',
+} as const) // as const needed to infer resources names
+
+// correctly infer all this subresources!
+api.repos('Amareis/another-rest-client').releases('latest').get()
+----
+
+You can then add more resources reusing already typed resource:
+
+[source,typescript]
+----
+api = api.withRes('additional-resource')
+----
+
+**Custom shortcuts currently not working with TypeScript!**
 
 == Events
 

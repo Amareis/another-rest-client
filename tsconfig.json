@@ -9,5 +9,9 @@
       "ES2021",
       "DOM"
     ],
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "dist"
   },
+  "include": ["./src/*"]
 }

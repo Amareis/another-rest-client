@@ -4,18 +4,18 @@
     <script src="../dist/rest-client.js"></script>
     <script>
         window.onload = function () {
-            const api = new RestClient('https://api.github.com');
-            api.res({repos: 'releases'});
+            const api = new RestClient('https://api.github.com')
+            api.res({repos: 'releases'})
 
-            window.api = api;
+            window.api = api
 
             api.repos('Amareis/another-rest-client').releases('latest').get().then((release) => {
-                console.log(release);
+                console.log(release)
                 document.body.innerHTML =
                     'Latest release of another-rest-client:<br>' +
                     `Published at: ${release.published_at}<br>` +
                     `Tag: ${release.tag_name}<br>`
-            });
+            })
         }
     </script>
 </head>
