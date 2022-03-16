@@ -55,6 +55,10 @@ type MR<T extends Ress> =
         : T extends string[] ? Res[]
             : {[ResName in keyof T]: T[ResName] extends Ress ? Res & MR<T[ResName]> : Res}
 
+interface Res {
+    (id?: string | number): this
+}
+
 class Res extends Function {
     private _shortcuts: Record<string, Res> = {}
     private _resources: Record<string, Res> = {}
